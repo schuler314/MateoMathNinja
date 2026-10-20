@@ -1,0 +1,1383 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Math Ninja: Mateo's Quest</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Supabase JS CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <!-- Google Fonts for Ninja / Arcade Vibe -->
+    <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Bungee&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Fredoka', sans-serif;
+            background: radial-gradient(circle at top, #1e1b4b, #0f172a 70%);
+            user-select: none;
+            -webkit-user-select: none;
+        }
+        .font-ninja {
+            font-family: 'Bungee', cursive;
+        }
+        @keyframes slash {
+            0% { transform: scaleX(0) rotate(-12deg); opacity: 1; }
+            50% { transform: scaleX(1.1) rotate(-12deg); opacity: 1; }
+            100% { transform: scaleX(1.2) rotate(-12deg); opacity: 0; }
+        }
+        .animate-slash {
+            animation: slash 0.35s ease-out forwards;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-6px); }
+        }
+        .animate-float {
+            animation: float 3s ease-in-out infinite;
+        }
+        @keyframes pulse- ice {
+            0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
+            50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.9); }
+        }
+        .ice-glow {
+            animation: pulse-ice 1.5s infinite;
+        }
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #64748b; }
+    </style>
+</head>
+<body class="text-white min-h-screen flex flex-col items-center justify-between p-3 md:p-6 overflow-x-hidden">
+
+    <!-- ================= TOP NAVIGATION BAR ================= -->
+    <header class="w-full max-w-4xl flex items-center justify-between bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-2xl px-4 py-3 shadow-lg z-20">
+        <div class="flex items-center gap-3 cursor-pointer" onclick="app.showScreen('home')">
+            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-2xl shadow-md border border-red-400">
+                🥷
+            </div>
+            <div>
+                <h1 class="font-ninja text-lg md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 leading-none">
+                    MATH NINJA
+                </h1>
+                <p class="text-xs text-slate-300 font-semibold tracking-wide">MATEO'S QUEST</p>
+            </div>
+        </div>
+
+        <div class="flex items-center gap-2 md:gap-3">
+            <!-- Active Player Badge -->
+            <button onclick="app.openNameModal()" class="flex items-center gap-2 bg-slate-900/90 hover:bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-sm transition" title="Change Player">
+                <span class="text-amber-400">👤</span>
+                <span id=" currentPlayerDisplay" class="font-bold text-amber-300 max-w-[100px] truncate">Mateo</span>
+            </button>
+
+            <!-- Sound Quick Toggle -->
+            <button id="headerSoundBtn" onclick="app.toggleQuickSound()" class="p-2.5 rounded-xl bg-slate-700/70 hover:bg-slate-700 border border-slate-600 transition" title="Toggle Sound">
+                🔊
+            </button>
+
+            <!-- Settings Button -->
+            <button onclick="app.openSettings()" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 px-3.5 py-2 rounded-xl font-bold text-sm shadow-md transition">
+                <span>⚙️</span>
+                <span class="hidden sm:inline">Settings</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- ================= MAIN CONTENT CONTAINER ================= -->
+    <main class="w-full max-w-4xl flex-1 flex flex-col justify-center my-4 relative">
+
+        <!-- 1. INITIAL NAME ENTRY MODAL / SCREEN -->
+        <section id="screen-name" class="hidden bg-slate-800/90 backdrop-blur-md border-2 border-amber-500/40 rounded-3xl p-6 md:p-10 shadow-2xl max-w-md mx-auto w-full text-center">
+            <div class="text-6xl mb-4 animate-float">🥷</div>
+            <h2 class="font-ninja text-2xl md:text-3xl text-amber-400 mb-2">Enter the Dojo!</h2>
+            <p class="text-slate-300 text-sm mb-6">What is your ninja name, warrior?</p>
+            
+            <form onsubmit="app.savePlayerName(event)" class="space-y-4">
+                <input 
+                    type="text" 
+                    id="playerNameInput" 
+                    maxlength="20" 
+                    placeholder="e.g., Mateo" 
+                    required
+                    class="w-full bg-slate-900 border-2 border-slate-600 focus:border-amber-400 rounded-2xl px-4 py-3.5 text-center text-xl font-bold text-white outline-none transition"
+                >
+                <div class="flex gap-2 justify-center">
+                    <button type="button" onclick="app.setQuickName('Mateo')" class="text-xs bg-slate-700 hover:bg-slate-600 px-3 py-1.5 rounded-lg text-amber-300 font-semibold">
+                        ⚡ Quick Fill: Mateo
+                    </button>
+                </div>
+                <button type="submit" class="w-full bg-gradient-to-r from-amber-500 to-red-600 hover:from-amber-400 hover:to-red-500 text-white font-ninja text-lg py-4 rounded-2xl shadow-lg transform active:scale-95 transition">
+                    BEGIN TRAINING!
+                </button>
+            </form>
+        </section>
+
+        <!-- 2. HOME / DOJO DASHBOARD SCREEN -->
+        <section id="screen-home" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+            
+            <!-- Left Column: Game Modes & Quick Controls (7 cols) -->
+            <div class="lg:col-span-7 bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-3xl p-5 md:p-6 shadow-xl space-y-6">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                    <div>
+                        <h2 class="font-ninja text-xl md:text-2xl text-amber-400">Choose Your Mission</h2>
+                        <p class="text-xs md:text-sm text-slate-300">Goal: 100 Multiplication Facts in 11 Minutes!</p>
+                    </div>
+                    <span id="activeFactorsBadge" class="bg-indigo-950 text-indigo-300 border border-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
+                        0s - 12s Active
+                    </span>
+                </div>
+
+                <!-- Preset Quick-Play Modes -->
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                    <!-- Classic 100 -->
+                    <button onclick="app.selectMode('classic')" id="mode-classic" class="mode-card group text-left p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-slate-900/90 transition relative overflow-hidden">
+                        <div class="text-3xl mb-2">🏆</div>
+                        <div class="font-ninja text-base text-amber-300">Classic 100</div>
+                        <p class="text-xs text-slate-300 mt-1">100 Facts • 11 Mins</p>
+                        <div class="mt-2 inline-block bg-amber-500/30 text-amber-200 text-[11px] px-2 py-0.5 rounded font-bold">
+                            Mateo's Goal!
+                        </div>
+                    </button>
+
+                    <!-- Quick Sprint -->
+                    <button onclick="app.selectMode('sprint')" id="mode-sprint" class="mode-card group text-left p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+                        <div class="text-3xl mb-2">⚡</div>
+                        <div class="font-ninja text-base text-cyan-300">Quick Sprint</div>
+                        <p class="text-xs text-slate-300 mt-1">Unlimited • 2 Mins</p>
+                        <div class="mt-2 inline-block bg-cyan-500/20 text-cyan-200 text-[11px] px-2 py-0.5 rounded font-bold">
+                            Speed Drill
+                        </div>
+                    </button>
+
+                    <!-- Custom Mode -->
+                    <button onclick="app.selectMode('custom')" id="mode-custom" class="mode-card group text-left p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+                        <div class="text-3xl mb-2">🛠️</div>
+                        <div class="font-ninja text-base text-purple-300">Custom Dojo</div>
+                        <p class="text-xs text-slate-300 mt-1">You Pick Time & Goal</p>
+                        <div class="mt-2 inline-block bg-purple-500/20 text-purple-200 text-[11px] px-2 py-0.5 rounded font-bold">
+                             Flexible
+                        </div>
+                    </button>
+                </div>
+
+                <!-- Home Screen Quick Interval & Target Adjusters -->
+                <div class="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs uppercase tracking-wider font-bold text-slate-400">Mission Parameters</span>
+                        <button onclick="app.openSettings()" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline">
+                             Customize 0s-12s Cards
+                        </button>
+                    </div>
+
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                        <!-- Time Adjuster -->
+                        <div class="bg-slate-800/90 p-3 rounded-xl border border-slate-700">
+                            <div class="flex justify-between text-sm mb-1.5">
+                                <span class="text-slate-300 font-semibold">⏱️ Time Limit:</span>
+                                <span id="homeTimeLabel" class="font-bold text-amber-400">11 Minutes</span>
+                            </div>
+                            <input type="range" id="homeTimeSlider" min="1" max="20" value="11" oninput="app.updateCustomParamsFromHome()" class="w-full accent-amber-500 cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                <span>1m</span>
+                                <span>5m</span>
+                                <span>11m (Goal)</span>
+                                <span>15m</span>
+                                <span>20m</span>
+                            </div>
+                        </div>
+
+                        <!-- Fact Goal Adjuster -->
+                        <div class="bg-slate-800/90 p-3 rounded-xl border border-slate-700">
+                            <div class="flex justify-between text-sm mb-1.5">
+                                <span class="text-slate-300 font-semibold">🎯 Fact Goal:</span>
+                                <span id="homeGoalLabel" class="font-bold text-emerald-400">100 Facts</span>
+                            </div>
+                            <input type="range" id="homeGoalSlider" min="20" max="250" step="10" value="100" oninput="app.updateCustomParamsFromHome()" class="w-full accent-emerald-500 cursor-pointer">
+                            <div class="flex justify-between text-[10px] text-slate-400 mt-1">
+                                <span>20</span>
+                                <span>50</span>
+                                <span>100 (Goal)</span>
+                                <span>250 (Max)</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Start Button -->
+                <button onclick="app.startGame()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-ninja text-2xl tracking-wider shadow-xl shadow-emerald-950/50 transform active:scale-95 transition flex items-center justify-center gap-3">
+                    <span>⚔️</span> START MISSION!
+                </button>
+            </div>
+
+            <!-- Right Column: Top Score & 11-Min Projections Leaderboard (5 cols) -->
+            <div class="lg:col-span-5 bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-3xl p-5 md:p-6 shadow-xl flex flex-col justify-between h-full">
+                <div>
+                    <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
+                        <div class="flex items-center gap-2">
+                            <span class="text-2xl">👑</span>
+                            <div>
+                                <h3 class="font-ninja text-lg text-amber-400">Dojo Leaderboard</h3>
+                                <p class="text-[11px] text-slate-400">Speed & 11-Min Projections</p>
+                            </div>
+                        </div>
+                        <span id="dbStatusBadge" class="text-[11px] px-2.5 py-1 rounded-full bg-slate-700 text-slate-300 font-semibold">
+                            Checking DB...
+                        </span>
+                    </div>
+
+                    <!-- Highlighted #1 Top Score Card -->
+                    <div id="topScoreHighlight" class="bg-gradient-to-br from-amber-500/20 via-orange-600/10 to-slate-900 border border-amber-500/50 rounded-2xl p-4 mb-4">
+                        <div class="flex justify-between items-start">
+                            <div>
+                                <span class="text-[10px] uppercase tracking-wider bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded">
+                                    #1 Grandmaster
+                                </span>
+                                <h4 id="topRecordName" class="text-xl font-bold text-white mt-1">Mateo</h4>
+                            </div>
+                            <div class="text-right">
+                                <div id="topRecordScore" class="font-ninja text-2xl text-amber-400">0 pts</div>
+                                <div id="topRecordFacts" class="text-xs text-slate-300">0 Facts Solved</div>
+                            </div>
+                        </div>
+                        <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-amber-500/20 text-center">
+                            <div class="bg-slate-900/80 rounded-xl p-2">
+                                <div class="text-[11px] text-slate-400">Speed (FPM)</div>
+                                <div id="topRecordFpm" class="text-base font-bold text-cyan-300">0.0 / min</div>
+                            </div>
+                            <div class="bg-slate-900/80 rounded-xl p-2">
+                                <div class="text-[11px] text-slate-400">11-Min Pace</div>
+                                <div id="topRecordProj" class="text-base font-bold text-emerald-400">0 Facts</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Scrollable Recent/Top Scores List -->
+                    <div id="leaderboardList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                        <!-- Dynamically populated -->
+                    </div>
+                </div>
+
+                <div class="mt-4 pt-3 border-t border-slate-700/80 flex justify-between items-center text-xs text-slate-400">
+                    <span> target pace: <b>9.1 facts/min</b> = 100 in 11m</span>
+                    <button onclick="app.fetchLeaderboard()" class="text-amber-400 hover:underline font-semibold">↻ Refresh</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 3. ACTIVE GAMEPLAY SCREEN -->
+        <section id="screen-game" class="hidden w-full max-w-2xl mx-auto space-y-4">
+            
+            <!-- HUD Bar: Timer, Progress, Pace -->
+            <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-lg">
+                <div class="grid grid-cols-3 gap-2 items-center text-center">
+                    <!-- Countdown Timer -->
+                    <div id="timerBox" class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-700 transition">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold flex items-center justify-center gap-1">
+                            <span>⏳</span> Time Left
+                        </div>
+                        <div id="gameTimerDisplay" class="font-ninja text-2xl md:text-3xl text-amber-400">11:00</div>
+                    </div>
+
+                    <!-- Facts Progress -->
+                    <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-700">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold">🎯 Facts Sliced</div>
+                        <div class="font-ninja text-2xl md:text-3xl text-emerald-400">
+                            <span id="gameFactsDone">0</span><span id="gameFactsGoal" class="text-base text-slate-400">/100</span>
+                        </div>
+                    </div>
+
+                    <!-- Live Pace & Score -->
+                    <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-700">
+                        <div class="text-[11px] text-slate-400 uppercase font-bold">⚡ 11m Pace</div>
+                        <div id="gameLiveProjection" class="font-ninja text-xl md:text-2xl text-cyan-300">0</div>
+                        <div class="text-[10px] text-slate-400">FPM: <span id="gameLiveFpm">0.0</span></div>
+                    </div>
+                </div>
+
+                <!-- Visual Progress Bar for Goal & Time -->
+                <div class="mt-3 space-y-1.5">
+                    <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-700 p-0.5">
+                        <div id="factProgressBar" class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                    </div>
+                    <div class="flex justify-between text-xs text-slate-400 px-1">
+                        <span>Score: <b id="gameScoreDisplay" class="text-amber-300">0</b></span>
+                        <span id="streakDisplay" class="text-orange-400 font-bold">🔥 Streak: 0</span>
+                        <button onclick="app.endGame(false)" class="text-rose-400 hover:underline">Quit Mission</button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Power-Ups Bar -->
+            <div id="powerupsContainer" class="grid grid-cols-3 gap-3">
+                <!-- Freeze Time -->
+                <button onclick="app.usePowerup('freeze')" id="btn-pw-freeze" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none border-2 border-cyan-500/50 rounded-2xl p-3 transition shadow-md">
+                    <div class="flex items-center gap-2 text-left">
+                        <span class="text-2xl">❄️</span>
+                        <div>
+                            <div class="font-bold text-xs md:text-sm text-cyan-300 leading-tight">Time Freeze</div>
+                            <div class="text-[10px] text-slate-400">Pause 10s (Key: 1)</div>
+                        </div>
+                    </div>
+                    <span id="count-pw-freeze" class="bg-cyan-950 text-cyan-300 border border-cyan-600 px-2 py-0.5 rounded-lg font-ninja text-sm">1</span>
+                </button>
+
+                <!-- 2x Multiplier -->
+                <button onclick="app.usePowerup('double')" id="btn-pw-double" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none border-2 border-amber-500/50 rounded-2xl p-3 transition shadow-md">
+                    <div class="flex items-center gap-2 text-left">
+                        <span class="text-2xl">⚡</span>
+                        <div>
+                            <div class="font-bold text-xs md:text-sm text-amber-300 leading-tight">2x Shuriken</div>
+                            <div class="text-[10px] text-slate-400">2x Pts 15s (Key: 2)</div>
+                        </div>
+                    </div>
+                    <span id="count-pw-double" class="bg-amber-950 text-amber-300 border border-amber-600 px-2 py-0.5 rounded-lg font-ninja text-sm">1</span>
+                </button>
+
+                <!-- Smoke Bomb Skip -->
+                <button onclick="app.usePowerup('skip')" id="btn-pw-skip" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none border-2 border-purple-500/50 rounded-2xl p-3 transition shadow-md">
+                    <div class="flex items-center gap-2 text-left">
+                        <span class="text-2xl">💨</span>
+                        <div>
+                            <div class="font-bold text-xs md:text-sm text-purple-300 leading-tight">Smoke Bomb</div>
+                            <div class="text-[10px] text-slate-400">Auto-Solve (Key: 3)</div>
+                        </div>
+                    </div>
+                    <span id="count-pw-skip" class="bg-purple-950 text-purple-300 border border-purple-600 px-2 py-0.5 rounded-lg font-ninja text-sm">2</span>
+                </button>
+            </div>
+
+            <!-- Active Flashcard Arena -->
+            <div id="flashcardArena" class="relative bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-slate-600 rounded-3xl p-6 md:p-8 text-center shadow-2xl overflow-hidden">
+                
+                <!-- Active Powerup Status Banner -->
+                <div id="activeBuffBanner" class="hidden mb-3 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400">
+                    ❄️ TIME FROZEN!
+                </div>
+
+                <!-- Sword Slash Visual Effect -->
+                <div id="slashEffect" class="hidden pointer-events-none absolute inset-x-8 top-1/2 h-3 bg-gradient-to-r from-transparent via-amber-300 to-white rounded-full shadow-[0_0_25px_#f59e0b]"></div>
+
+                <!-- The Multiplication Question -->
+                <div class="my-2 md:my-4 flex items-center justify-center gap-4 text-5xl md:text-7xl font-ninja tracking-wider text-white">
+                    <span id=" factorA" class="text-amber-300">7</span>
+                    <span class="text-red-500 text-4xl md:text-6xl">×</span>
+                    <span id="factorB" class="text-amber-300">8</span>
+                    <span class="text-slate-500">=</span>
+                    <div id="answerBox" class="min-w-[110px] md:min-w-[140px] px-4 py-2 rounded-2xl bg-slate-950 border-2 border-amber-400 text-emerald-400 shadow-inner">
+                        ?
+                    </div>
+                </div>
+
+                <p id="feedbackText" class="h-5 text-xs font-bold text-slate-400 tracking-wide">
+                    Type your answer and press ENTER or tap Attack!
+                </p>
+
+                <!-- On-Screen Touch Numpad for Tablet/Mobile/Desktop -->
+                <div class="max-w-xs mx-auto mt-5 grid grid-cols-3 gap-2.5">
+                    <button onclick="app. appendDigit(1)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">1</button>
+                    <button onclick="app.appendDigit(2)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">2</button>
+                    <button onclick="app.appendDigit(3)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">3</button>
+                    <button onclick="app.appendDigit(4)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">4</button>
+                    <button onclick="app.appendDigit(5)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">5</button>
+                    <button onclick="app.appendDigit(6)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">6</button>
+                    <button onclick="app.appendDigit(7)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">7</button>
+                    <button onclick="app.appendDigit(8)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">8</button>
+                    <button onclick="app.appendDigit(9)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">9</button>
+                    <button onclick="app.clearDigits()" class="bg-rose-900/80 hover:bg-rose-800 text-rose-200 active:scale-95 py-3 rounded-xl font-bold text-sm shadow">CLR</button>
+                    <button onclick="app.appendDigit(0)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">0</button>
+                    <button onclick="app.submitAnswer()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white active:scale-95 py-3 rounded-xl font-ninja text-base shadow-lg">SLASH!</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- 4. POST-GAME RESULTS SCREEN -->
+        <section id="screen-results" class="hidden bg-slate-800/90 backdrop-blur-md border-2 border-amber-500/40 rounded-3xl p-6 md:p-8 shadow-2xl max-w-xl mx-auto w-full text-center space-y-6">
+            <div>
+                <div id="resultEmoji" class="text-6xl mb-2">🎉</div>
+                <h2 id="resultTitle" class="font-ninja text-3xl text-amber-400">MISSION COMPLETE!</h2>
+                <p id="resultSubtitle" class="text-sm text-slate-300">Awesome job in the Dojo, Mateo!</p>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-700">
+                    <div class="text-xs text-slate-400">Facts Solved</div>
+                    <div id="resFacts" class="font-ninja text-2xl text-emerald-400 mt-1">100</div>
+                </div>
+                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-700">
+                    <div class="text-xs text-slate-400">Speed (FPM)</div>
+                    <div id="resFpm" class="font-ninja text-2xl text-cyan-300 mt-1">10.5</div>
+                    <div class="text-[10px] text-slate-400">facts / minute</div>
+                </div>
+                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-amber-500/40">
+                    <div class="text-xs text-amber-300 font-bold">11-Min Pace</div>
+                    <div id="resProj11" class="font-ninja text-2xl text-amber-400 mt-1">115</div>
+                    <div class="text-[10px] text-slate-400">facts / 11 mins</div>
+                </div>
+                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-700">
+                    <div class="text-xs text-slate-400">Total Score</div>
+                    <div id="resScore" class="font-ninja text-2xl text-purple-400 mt-1">1250</div>
+                </div>
+            </div>
+
+            <!-- Missed Facts Review (if any) -->
+            <div id="missedFactsBox" class="hidden bg-slate-900/80 border border-rose-500/30 rounded-2xl p-4 text-left">
+                <h4 class="text-xs font-bold uppercase tracking-wider text-rose-400 mb-2">🧠 Ninja Scrolls to Review:</h4>
+                <div id="missedFactsList" class="flex flex-wrap gap-2 text-xs"></div>
+            </div>
+
+            <div class="flex flex-col sm:flex-row gap-3">
+                <button onclick="app.startGame()" class="flex-1 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 font-ninja text-lg shadow-lg transition">
+                    🔄 PLAY AGAIN
+                </button>
+                <button onclick="app.showScreen('home')" class="flex-1 py-4 rounded-2xl bg-slate-700 hover:bg-slate-600 font-ninja text-lg shadow-lg transition">
+                    🏠 DOJO HOME
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- ================= COMPREHENSIVE SETTINGS MODAL ================= -->
+    <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border-2 border-slate-600 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-6">
+            
+            <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+                <div class="flex items-center gap-2.5">
+                    <span class="text-2xl">⚙️</span>
+                    <h2 class="font-ninja text-2xl text-amber-400">Dojo Settings</h2>
+                </div>
+                <button onclick="app.closeSettings()" class="w-9 h-9 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center font-bold">✕</button>
+            </div>
+
+            <!-- 1. Factor Selection (0s to 12s) -->
+            <div class="space-y-3">
+                <div class="flex flex-wrap items-center justify-between gap-2">
+                    <div>
+                        <h3 class="font-bold text-base text-white">🔢 Multiplication Flashcards (0s to 12s)</h3>
+                        <p class="text-xs text-slate-400">Toggle which number sets appear in Mateo's deck (includes 0×0 up to 12×12)</p>
+                    </div>
+                    <div class="flex gap-2">
+                        <button onclick="app.setAllFactors(true)" class="text-xs bg-indigo-600 hover:bg-indigo-500 px-2.5 py-1 rounded-lg font-semibold">Select All</button>
+                        <button onclick="app.setAllFactors(false)" class="text-xs bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded-lg font-semibold">Clear</button>
+                    </div>
+                </div>
+                <div id="factorTogglesGrid" class="grid grid-cols-4 sm:grid-cols-7 gap-2">
+                    <!-- Populated by JS: 0s through 12s -->
+                </div>
+            </div>
+
+            <!-- 2. Duration & Fact Goal Sliders -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-900/70 p-4 rounded-2xl border border-slate-700">
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="font-bold text-slate-300">⏱️ Timer Duration</span>
+                        <span id="settingsTimeValue" class="text-amber-400 font-bold">11 Mins</span>
+                    </div>
+                    <input type="range" id="settingsTimeSlider" min="1" max="30" value="11" oninput="app.syncSettingsSliders()" class="w-full accent-amber-500">
+                    <p class="text-[11px] text-slate-400 mt-1">Default goal is 11 minutes.</p>
+                </div>
+
+                <div>
+                    <div class="flex justify-between text-sm mb-2">
+                        <span class="font-bold text-slate-300">🎯 Target Facts</span>
+                        <span id="settingsGoalValue" class="text-emerald-400 font-bold">100 Facts</span>
+                    </div>
+                    <input type="range" id="settingsGoalSlider" min="10" max="300" step="10" value="100" oninput="app.syncSettingsSliders()" class="w-full accent-emerald-500">
+                    <p class="text-[11px] text-slate-400 mt-1">Default goal is 100 multiplication facts.</p>
+                </div>
+            </div>
+
+            <!-- 3. Sound & Power-Ups Toggles -->
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <label class="flex items-center justify-between bg-slate-900/70 p-3.5 rounded-2xl border border-slate-700 cursor-pointer">
+                    <span class="text-sm font-semibold">🔊 Sound Effects</span>
+                    <input type="checkbox" id="toggleSfx" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
+                </label>
+
+                <label class="flex items-center justify-between bg-slate-900/70 p-3.5 rounded-2xl border border-slate-700 cursor-pointer">
+                    <span class="text-sm font-semibold">🎵 Dojo Music</span>
+                    <input type="checkbox" id="toggleMusic" onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
+                </label>
+
+                <label class="flex items-center justify-between bg-slate-900/70 p-3.5 rounded-2xl border border-slate-700 cursor-pointer">
+                    <span class="text-sm font-semibold">⚡ Power-Ups</span>
+                    <input type="checkbox" id="togglePowerups" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
+                </label>
+            </div>
+
+            <!-- 4. Supabase Connection & High Score Reset -->
+            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 space-y-3">
+                <div class="flex items-center justify-between">
+                    <h4 class="text-sm font-bold text-cyan-300">☁️ Supabase Non-Auth Leaderboard Setup</h4>
+                    <span class="text-[11px] text-slate-400">Persists in Browser & Cloud</span>
+                </div>
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                    <input type="text" id="sbUrlInput" placeholder="https://your-project.supabase.co" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-400">
+                    <input type="text" id="sbKeyInput" placeholder="Supabase Anon / Publishable Key" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-400">
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
+                    <button onclick="app.saveSupabaseConfig()" class="text-xs bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-3 py-2 rounded-xl transition">
+                        💾 Save Supabase Keys
+                    </button>
+                    <button onclick="app.resetHighScores()" class="text-xs bg-rose-900/80 hover:bg-rose-700 text-rose-200 font-bold px-3 py-2 rounded-xl transition">
+                        🗑️ Reset All High Scores
+                    </button>
+                </div>
+            </div>
+
+            <div class="flex justify-end pt-2">
+                <button onclick="app.closeSettings()" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-ninja px-6 py-2.5 rounded-xl shadow-lg">
+                    DONE
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="w-full max-w-4xl text-center text-xs text-slate-500 py-2">
+        Math Ninja: Mateo's Quest • Use Keyboard (0-9, Enter, Backspace) or Touch Numpad
+    </footer>
+
+    <!-- Custom Toast / Confirmation Modal -->
+    <div id="customToast" class="fixed bottom-5 right-5 bg-slate-800 border-2 border-amber-400 text-white px-4 py-3 rounded-2xl shadow-2xl z-50 hidden items-center gap-3 transition-all">
+        <span id="customToastMsg" class="text-sm font-bold text-amber-300"></span>
+    </div>
+
+    <div id="confirmModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border-2 border-rose-500 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4">
+            <div class="text-4xl">⚠️</div>
+            <h3 class="font-ninja text-xl text-rose-400">Reset All High Scores?</h3>
+            <p class="text-xs text-slate-300">This will clear all leaderboard records from both your browser and the Supabase MathNinja database.</p>
+            <div class="flex gap-3 pt-2">
+                <button onclick="app.closeConfirmModal()" class="flex-1 py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 font-bold text-sm">Cancel</button>
+                <button onclick="app.executeResetHighScores()" class="flex-1 py-2.5 rounded-xl bg-rose-600 hover:bg-rose-500 font-bold text-sm text-white">Yes, Reset</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ================= APPLICATION LOGIC ================= -->
+    <script>
+        /**
+         * ============================================================================
+         * SUPABASE CONFIGURATION
+         * Configured with your non-auth Supabase Project URL & Publishable Key
+         * targeting the custom "MathNinja" schema.
+         * ============================================================================
+         */
+        const DEFAULT_SUPABASE_URL = "https://apgfskdxexlyyavmhdlg.supabase.co";
+        const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_rvwuan8wg1tyegGFSt2jMA_E1CJaM5L";
+
+        // Web Audio Synthesizer for Ninja Sound Effects & Background Music (Zero external MP3 dependencies)
+        class NinjaAudio {
+            constructor() {
+                this.ctx = null;
+                this.musicInterval = null;
+            }
+            init() {
+                if (!this.ctx) {
+                    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+                    this.ctx = new AudioCtx();
+                }
+                if (this.ctx.state === 'suspended') this.ctx.resume();
+            }
+            playSlash() {
+                if (!app.settings.sfx) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(520, now);
+                osc.frequency.exponentialRampToValueAtTime(1100, now + 0.12);
+                gain.gain.setValueAtTime(0.25, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.14);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.14);
+            }
+            playMiss() {
+                if (!app.settings.sfx) return;
+                this.init();
+                const now = this.ctx.currentTime;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(180, now);
+                osc.frequency.linearRampToValueAtTime(110, now + 0.2);
+                gain.gain.setValueAtTime(0.2, now);
+                gain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+                osc.connect(gain);
+                gain.connect(this.ctx.destination);
+                osc.start(now);
+                osc.stop(now + 0.22);
+            }
+            playPowerup() {
+                if (!app.settings.sfx) return;
+                this.init();
+                const notes = [440, 554, 659, 880];
+                notes.forEach((freq, idx) => {
+                    const now = this.ctx.currentTime + idx * 0.06;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, now);
+                    gain.gain.setValueAtTime(0.2, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.15);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.15);
+                });
+            }
+            startMusic() {
+                this.stopMusic();
+                if (!app.settings.music) return;
+                this.init();
+                const scale = [220, 261.63, 293.66, 329.63, 392.00]; // Pentatonic Ninja scale
+                let step = 0;
+                this.musicInterval = setInterval(() => {
+                    if (!app.settings.music || app.currentScreen !== 'game') return;
+                    const now = this.ctx.currentTime;
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    const freq = scale[step % scale.length];
+                    osc.frequency.setValueAtTime(freq, now);
+                    gain.gain.setValueAtTime(0.04, now);
+                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+                    osc.connect(gain);
+                    gain.connect(this.ctx.destination);
+                    osc.start(now);
+                    osc.stop(now + 0.35);
+                    step++;
+                }, 450);
+            }
+            stopMusic() {
+                if (this.musicInterval) {
+                    clearInterval(this.musicInterval);
+                    this.musicInterval = null;
+                }
+            }
+        }
+
+        const audio = new NinjaAudio();
+
+        const app = {
+            currentScreen: 'home',
+            playerName: localStorage.getItem('math_ninja_player') || '',
+            supabase: null,
+            
+            settings: {
+                factors: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12],
+                durationMinutes: 11,
+                factGoal: 100,
+                mode: 'classic', // 'classic', 'sprint', 'custom'
+                sfx: true,
+                music: false,
+                powerupsEnabled: true
+            },
+
+            gameState: {
+                active: false,
+                totalSeconds: 660,
+                remainingSeconds: 660,
+                elapsedSeconds: 0,
+                factsSolved: 0,
+                factGoal: 100,
+                score: 0,
+                streak: 0,
+                currentInput: '',
+                currentQuestion: { a: 7, b: 8, answer: 56 },
+                deck: [],
+                missedFacts: [],
+                timerInterval: null,
+                freezeSecondsLeft: 0,
+                doubleSecondsLeft: 0,
+                powerups: { freeze: 1, double: 1, skip: 2 }
+            },
+
+            init() {
+                // Load saved settings
+                const savedSettings = localStorage.getItem('math_ninja_settings');
+                if (savedSettings) {
+                    try {
+                        this.settings = { ...this.settings, ...JSON.parse(savedSettings) };
+                    } catch (e) {}
+                }
+
+                this.initSupabase();
+                this.renderFactorToggles();
+                this.syncUIWithSettings();
+                this.fetchLeaderboard();
+
+                // Keyboard listener for fast typing
+                window.addEventListener('keydown', (e) => this.handleKeyDown(e));
+
+                // Show initial player name prompt if no name stored
+                if (!this.playerName) {
+                    this.playerName = 'Mateo';
+                    this.showScreen('name');
+                    document.getElementById('playerNameInput').value = 'Mateo';
+                } else {
+                    document.getElementById('currentPlayerDisplay').textContent = this.playerName;
+                    this.showScreen('home');
+                }
+            },
+
+            initSupabase() {
+                const storedUrl = localStorage.getItem('math_ninja_sb_url') || DEFAULT_SUPABASE_URL;
+                const storedKey = localStorage.getItem('math_ninja_sb_key') || DEFAULT_SUPABASE_ANON_KEY;
+
+                document.getElementById('sbUrlInput').value = storedUrl.includes('YOUR_PROJECT_ID') ? '' : storedUrl;
+                document.getElementById('sbKeyInput').value = storedKey.includes('YOUR_SUPABASE') ? '' : storedKey;
+
+                const badge = document.getElementById('dbStatusBadge');
+                if (storedUrl && storedKey && !storedUrl.includes('YOUR_PROJECT_ID') && window.supabase) {
+                    try {
+                        this.supabase = window.supabase.createClient(storedUrl, storedKey, {
+                            db: { schema: 'MathNinja' }
+                        });
+                        badge.textContent = '🟢 Supabase (MathNinja)';
+                        badge.className = 'text-[11px] px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 font-semibold';
+                    } catch (err) {
+                        this.supabase = null;
+                        badge.textContent = '🟡 Local Mode';
+                    }
+                } else {
+                    this.supabase = null;
+                    badge.textContent = '🟡 Local Storage (Add Keys in ⚙️)';
+                    badge.className = 'text-[11px] px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700/60 font-semibold';
+                }
+            },
+
+            saveSupabaseConfig() {
+                const url = document.getElementById('sbUrlInput').value.trim();
+                const key = document.getElementById('sbKeyInput').value.trim();
+                if (url && key) {
+                    localStorage.setItem('math_ninja_sb_url', url);
+                    localStorage.setItem('math_ninja_sb_key', key);
+                } else {
+                    localStorage.removeItem('math_ninja_sb_url');
+                    localStorage.removeItem('math_ninja_sb_key');
+                }
+                this.initSupabase();
+                this.fetchLeaderboard();
+                this.showToast('☁️ Supabase configuration updated!');
+            },
+
+            showToast(msg) {
+                const toast = document.getElementById('customToast');
+                const msgEl = document.getElementById('customToastMsg');
+                if (!toast || !msgEl) return;
+                msgEl.textContent = msg;
+                toast.classList.remove('hidden');
+                toast.classList.add('flex');
+                setTimeout(() => {
+                    toast.classList.add('hidden');
+                    toast.classList.remove('flex');
+                }, 3000);
+            },
+
+            showScreen(screenName) {
+                this.currentScreen = screenName;
+                ['name', 'home', 'game', 'results'].forEach(s => {
+                    const el = document.getElementById(`screen-${s}`);
+                    if (el) el.classList.toggle('hidden', s !== screenName);
+                });
+                if (screenName !== 'game') {
+                    audio.stopMusic();
+                    if (this.gameState.timerInterval) clearInterval(this.gameState.timerInterval);
+                }
+            },
+
+            openNameModal() {
+                document.getElementById('playerNameInput').value = this.playerName;
+                this.showScreen('name');
+            },
+
+            setQuickName(name) {
+                document.getElementById('playerNameInput').value = name;
+            },
+
+            savePlayerName(e) {
+                e.preventDefault();
+                const val = document.getElementById('playerNameInput').value.trim() || 'Mateo';
+                this.playerName = val;
+                localStorage.setItem('math_ninja_player', val);
+                document.getElementById('currentPlayerDisplay').textContent = val;
+                this.showScreen('home');
+            },
+
+            selectMode(mode) {
+                this.settings.mode = mode;
+                if (mode === 'classic') {
+                    this.settings.durationMinutes = 11;
+                    this.settings.factGoal = 100;
+                } else if (mode === 'sprint') {
+                    this.settings.durationMinutes = 2;
+                    this.settings.factGoal = 250; // Effectively unlimited sprint
+                }
+                this.saveSettings();
+                this.syncUIWithSettings();
+            },
+
+            updateCustomParamsFromHome() {
+                const mins = parseInt(document.getElementById('homeTimeSlider').value, 10);
+                const goal = parseInt(document.getElementById('homeGoalSlider').value, 10);
+                this.settings.durationMinutes = mins;
+                this.settings.factGoal = goal;
+                if (mins === 11 && goal === 100) {
+                    this.settings.mode = 'classic';
+                } else {
+                    this.settings.mode = 'custom';
+                }
+                this.saveSettings();
+                this.syncUIWithSettings();
+            },
+
+            syncSettingsSliders() {
+                const mins = parseInt(document.getElementById('settingsTimeSlider').value, 10);
+                const goal = parseInt(document.getElementById('settingsGoalSlider').value, 10);
+                this.settings.durationMinutes = mins;
+                this.settings.factGoal = goal;
+                this.settings.mode = (mins === 11 && goal === 100) ? 'classic' : 'custom';
+                this.saveSettings();
+                this.syncUIWithSettings();
+            },
+
+            syncUIWithSettings() {
+                // Highlight selected mode card
+                ['classic', 'sprint', 'custom'].forEach(m => {
+                    const card = document.getElementById(`mode-${m}`);
+                    if (!card) return;
+                    if (this.settings.mode === m) {
+                        card.className = 'mode-card group text-left p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-slate-900/90 transition relative overflow-hidden shadow-lg';
+                    } else {
+                        card.className = 'mode-card group text-left p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition';
+                    }
+                });
+
+                // Home Sliders
+                document.getElementById('homeTimeSlider').value = Math.min(20, this.settings.durationMinutes);
+                document.getElementById('homeTimeLabel').textContent = `${this.settings.durationMinutes} Minute${this.settings.durationMinutes > 1 ? 's' : ''}`;
+                document.getElementById('homeGoalSlider').value = Math.min(250, this.settings.factGoal);
+                document.getElementById('homeGoalLabel').textContent = `${this.settings.factGoal} Facts`;
+
+                // Settings Modal Sliders
+                document.getElementById('settingsTimeSlider').value = this.settings.durationMinutes;
+                document.getElementById('settingsTimeValue').textContent = `${this.settings.durationMinutes} Mins`;
+                document.getElementById('settingsGoalSlider').value = this.settings.factGoal;
+                document.getElementById('settingsGoalValue').textContent = `${this.settings.factGoal} Facts`;
+
+                // Checkboxes
+                document.getElementById('toggleSfx').checked = this.settings.sfx;
+                document.getElementById('toggleMusic').checked = this.settings.music;
+                document.getElementById('togglePowerups').checked = this.settings.powerupsEnabled;
+                document.getElementById('headerSoundBtn').textContent = this.settings.sfx ? '🔊' : '🔇';
+
+                // Active Factors Badge
+                const count = this.settings.factors.length;
+                const badge = document.getElementById('activeFactorsBadge');
+                if (count === 13) {
+                    badge.textContent = 'All 0s - 12s Active (169 Cards)';
+                } else {
+                    badge.textContent = `${count} Factor Sets Active`;
+                }
+            },
+
+            renderFactorToggles() {
+                const grid = document.getElementById('factorTogglesGrid');
+                grid.innerHTML = '';
+                for (let i = 0; i <= 12; i++) {
+                    const isSelected = this.settings.factors.includes(i);
+                    const btn = document.createElement('button');
+                    btn.type = 'button';
+                    btn.onclick = () => this.toggleFactor(i);
+                    btn.className = isSelected
+                        ? 'py-2.5 px-2 rounded-xl font-ninja text-sm bg-amber-500 text-slate-950 border-2 border-amber-300 shadow transition'
+                        : 'py-2.5 px-2 rounded-xl font-ninja text-sm bg-slate-900 text-slate-400 border-2 border-slate-700 hover:border-slate-500 transition';
+                    btn.textContent = `${i}s`;
+                    grid.appendChild(btn);
+                }
+            },
+
+            toggleFactor(num) {
+                const idx = this.settings.factors.indexOf(num);
+                if (idx > -1) {
+                    if (this.settings.factors.length > 1) {
+                        this.settings.factors.splice(idx, 1);
+                    }
+                } else {
+                    this.settings.factors.push(num);
+                    this.settings.factors.sort((a, b) => a - b);
+                }
+                this.saveSettings();
+                this.renderFactorToggles();
+                this.syncUIWithSettings();
+            },
+
+            setAllFactors(enableAll) {
+                if (enableAll) {
+                    this.settings.factors = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+                } else {
+                    this.settings.factors = [2]; // Keep at least one factor active
+                }
+                this.saveSettings();
+                this.renderFactorToggles();
+                this.syncUIWithSettings();
+            },
+
+            openSettings() {
+                this.renderFactorToggles();
+                this.syncUIWithSettings();
+                const modal = document.getElementById('settingsModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            },
+
+            closeSettings() {
+                const modal = document.getElementById('settingsModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            },
+
+            saveSettingsFromModal() {
+                this.settings.sfx = document.getElementById('toggleSfx').checked;
+                this.settings.music = document.getElementById('toggleMusic').checked;
+                this.settings.powerupsEnabled = document.getElementById('togglePowerups').checked;
+                this.saveSettings();
+                this.syncUIWithSettings();
+            },
+
+            toggleQuickSound() {
+                this.settings.sfx = !this.settings.sfx;
+                this.saveSettings();
+                this.syncUIWithSettings();
+            },
+
+            saveSettings() {
+                localStorage.setItem('math_ninja_settings', JSON.stringify(this.settings));
+            },
+
+            /**
+             * Builds a balanced deck of multiplication flashcards based on selected factors (0..12)
+             * Includes all combinations (e.g., 0x0, 0x1 ... 11x12, 12x12)
+             */
+            buildDeck() {
+                const pool = [];
+                const activeSet = new Set(this.settings.factors);
+                for (let a = 0; a <= 12; a++) {
+                    for (let b = 0; b <= 12; b++) {
+                        if (activeSet.has(a) || activeSet.has(b)) {
+                            // If user only selected specific sets, prioritize pairs where at least one factor is in the set
+                            if (activeSet.has(a)) {
+                                pool.push({ a, b, answer: a * b });
+                            }
+                        }
+                    }
+                }
+                // Shuffle deck using Fisher-Yates
+                for (let i = pool.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [pool[i], pool[j]] = [pool[j], pool[i]];
+                }
+                this.gameState.deck = pool;
+            },
+
+            nextQuestion() {
+                if (this.gameState.deck.length === 0) {
+                    this.buildDeck();
+                }
+                const q = this.gameState.deck.pop();
+                // Randomly swap a and b 50% of the time so both 11x12 and 12x11 feel natural
+                if (Math.random() > 0.5) {
+                    this.gameState.currentQuestion = { a: q.b, b: q.a, answer: q.answer };
+                } else {
+                    this.gameState.currentQuestion = q;
+                }
+                this.gameState.currentInput = '';
+                document.getElementById('factorA').textContent = this.gameState.currentQuestion.a;
+                document.getElementById('factorB').textContent = this.gameState.currentQuestion.b;
+                document.getElementById('answerBox').textContent = '?';
+                document.getElementById('answerBox').className = 'min-w-[110px] md:min-w-[140px] px-4 py-2 rounded-2xl bg-slate-950 border-2 border-amber-400 text-emerald-400 shadow-inner';
+            },
+
+            startGame() {
+                const totalSecs = this.settings.durationMinutes * 60;
+                this.gameState = {
+                    active: true,
+                    totalSeconds: totalSecs,
+                    remainingSeconds: totalSecs,
+                    elapsedSeconds: 0,
+                    factsSolved: 0,
+                    factGoal: this.settings.factGoal,
+                    score: 0,
+                    streak: 0,
+                    currentInput: '',
+                    currentQuestion: null,
+                    deck: [],
+                    missedFacts: [],
+                    timerInterval: null,
+                    freezeSecondsLeft: 0,
+                    doubleSecondsLeft: 0,
+                    powerups: { freeze: 1, double: 1, skip: 2 }
+                };
+
+                document.getElementById('powerupsContainer').classList.toggle('hidden', !this.settings.powerupsEnabled);
+                this.buildDeck();
+                this.nextQuestion();
+                this.updateGameHUD();
+                this.showScreen('game');
+                audio.startMusic();
+
+                if (this.gameState.timerInterval) clearInterval(this.gameState.timerInterval);
+                this.gameState.timerInterval = setInterval(() => this.tickTimer(), 1000);
+            },
+
+            tickTimer() {
+                if (!this.gameState.active) return;
+
+                // Handle Active Buffs
+                if (this.gameState.doubleSecondsLeft > 0) {
+                    this.gameState.doubleSecondsLeft--;
+                }
+
+                if (this.gameState.freezeSecondsLeft > 0) {
+                    this.gameState.freezeSecondsLeft--;
+                } else {
+                    this.gameState.remainingSeconds--;
+                    this.gameState.elapsedSeconds++;
+                }
+
+                this.updateGameHUD();
+
+                if (this.gameState.remainingSeconds <= 0) {
+                    this.endGame(true);
+                }
+            },
+
+            updateGameHUD() {
+                const mins = Math.floor(this.gameState.remainingSeconds / 60);
+                const secs = this.gameState.remainingSeconds % 60;
+                document.getElementById('gameTimerDisplay').textContent = `${mins}:${secs < 10 ? '0' : ''}${secs}`;
+
+                document.getElementById('gameFactsDone').textContent = this.gameState.factsSolved;
+                document.getElementById('gameFactsGoal').textContent = `/${this.gameState.factGoal}`;
+                document.getElementById('gameScoreDisplay').textContent = this.gameState.score;
+                document.getElementById('streakDisplay').textContent = `🔥 Streak: ${this.gameState.streak}`;
+
+                // Calculate Live FPM & 11-Minute Projection
+                const effectiveElapsed = Math.max(1, this.gameState.elapsedSeconds);
+                const fpm = (this.gameState.factsSolved / effectiveElapsed) * 60;
+                const proj11 = Math.round(fpm * 11);
+
+                document.getElementById('gameLiveFpm').textContent = fpm.toFixed(1);
+                document.getElementById('gameLiveProjection').textContent = `${proj11} facts`;
+
+                // Progress bar
+                const pct = Math.min(100, (this.gameState.factsSolved / this.gameState.factGoal) * 100);
+                document.getElementById('factProgressBar').style.width = `${pct}%`;
+
+                // Powerups counts
+                document.getElementById('count-pw-freeze').textContent = this.gameState.powerups.freeze;
+                document.getElementById('count-pw-double').textContent = this.gameState.powerups.double;
+                document.getElementById('count-pw-skip').textContent = this.gameState.powerups.skip;
+
+                document.getElementById('btn-pw-freeze').disabled = this.gameState.powerups.freeze <= 0;
+                document.getElementById('btn-pw-double').disabled = this.gameState.powerups.double <= 0;
+                document.getElementById('btn-pw-skip').disabled = this.gameState.powerups.skip <= 0;
+
+                // Buff Banner & Freeze Glow
+                const banner = document.getElementById('activeBuffBanner');
+                const timerBox = document.getElementById('timerBox');
+                if (this.gameState.freezeSecondsLeft > 0) {
+                    banner.classList.remove('hidden');
+                    banner.textContent = `❄️ TIME FROZEN (${this.gameState.freezeSecondsLeft}s)`;
+                    timerBox.classList.add('ice-glow', 'border-cyan-400');
+                } else if (this.gameState.doubleSecondsLeft > 0) {
+                    banner.classList.remove('hidden');
+                    banner.textContent = `⚡ 2X SHURIKEN POINTS (${this.gameState.doubleSecondsLeft}s)`;
+                    timerBox.classList.remove('ice-glow', 'border-cyan-400');
+                } else {
+                    banner.classList.add('hidden');
+                    timerBox.classList.remove('ice-glow', 'border-cyan-400');
+                }
+            },
+
+            appendDigit(digit) {
+                if (!this.gameState.active) return;
+                if (this.gameState.currentInput.length < 3) {
+                    this.gameState.currentInput += String(digit);
+                    document.getElementById('answerBox').textContent = this.gameState.currentInput;
+                }
+            },
+
+            clearDigits() {
+                if (!this.gameState.active) return;
+                this.gameState.currentInput = '';
+                document.getElementById('answerBox').textContent = '?';
+            },
+
+            handleKeyDown(e) {
+                if (this.currentScreen !== 'game' || !this.gameState.active) return;
+                if (e.key >= '0' && e.key <= '9') {
+                    e.preventDefault();
+                    this.appendDigit(e.key);
+                } else if (e.key === 'Backspace' || e.key === 'Delete') {
+                    e.preventDefault();
+                    this.gameState.currentInput = this.gameState.currentInput.slice(0, -1);
+                    document.getElementById('answerBox').textContent = this.gameState.currentInput || '?';
+                } else if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    this.submitAnswer();
+                } else if (e.key === '1' && this.settings.powerupsEnabled) {
+                    this.usePowerup('freeze');
+                } else if (e.key === '2' && this.settings.powerupsEnabled) {
+                    this.usePowerup('double');
+                } else if (e.key === '3' && this.settings.powerupsEnabled) {
+                    this.usePowerup('skip');
+                }
+            },
+
+            submitAnswer() {
+                if (!this.gameState.active || this.gameState.currentInput === '') return;
+                const userAns = parseInt(this.gameState.currentInput, 10);
+                const correctAns = this.gameState.currentQuestion.answer;
+
+                if (userAns === correctAns) {
+                    this.handleCorrectAnswer();
+                } else {
+                    this.handleWrongAnswer();
+                }
+            },
+
+            handleCorrectAnswer() {
+                audio.playSlash();
+                this.gameState.factsSolved++;
+                this.gameState.streak++;
+
+                const mult = this.gameState.doubleSecondsLeft > 0 ? 2 : 1;
+                const streakBonus = Math.min(50, this.gameState.streak * 2);
+                this.gameState.score += (10 + streakBonus) * mult;
+
+                // Award milestone powerups every 15 streak
+                if (this.settings.powerupsEnabled && this.gameState.streak > 0 && this.gameState.streak % 15 === 0) {
+                    this.gameState.powerups.freeze++;
+                    this.gameState.powerups.double++;
+                    document.getElementById('feedbackText').textContent = `🎁 15 STREAK BONUS! +1 Freeze & +1 2x Shuriken!`;
+                } else {
+                    document.getElementById('feedbackText').textContent = `⚔️ SLICED! ${this.gameState.currentQuestion.a} × ${this.gameState.currentQuestion.b} = ${this.gameState.currentQuestion.answer}`;
+                }
+
+                // Trigger Sword Slash Animation
+                const slash = document.getElementById('slashEffect');
+                slash.classList.remove('hidden', 'animate-slash');
+                void slash.offsetWidth;
+                slash.classList.add('animate-slash');
+
+                this.updateGameHUD();
+
+                // Check if target goal reached
+                if (this.gameState.factsSolved >= this.gameState.factGoal) {
+                    this.endGame(true);
+                } else {
+                    this.nextQuestion();
+                }
+            },
+
+            handleWrongAnswer() {
+                audio.playMiss();
+                this.gameState.streak = 0;
+                const q = this.gameState.currentQuestion;
+                const factStr = `${q.a} × ${q.b} = ${q.answer}`;
+                if (!this.gameState.missedFacts.includes(factStr)) {
+                    this.gameState.missedFacts.push(factStr);
+                }
+                document.getElementById('feedbackText').textContent = `❌ Oops! Try ${q.a} × ${q.b} again!`;
+                document.getElementById('answerBox').className = 'min-w-[110px] md:min-w-[140px] px-4 py-2 rounded-2xl bg-rose-950 border-2 border-rose-500 text-rose-300 shadow-inner';
+                this.gameState.currentInput = '';
+                setTimeout(() => {
+                    if (this.gameState.active) {
+                        document.getElementById('answerBox').textContent = '?';
+                    }
+                }, 400);
+                this.updateGameHUD();
+            },
+
+            usePowerup(type) {
+                if (!this.gameState.active || !this.settings.powerupsEnabled) return;
+                if (this.gameState.powerups[type] <= 0) return;
+
+                this.gameState.powerups[type]--;
+                audio.playPowerup();
+
+                if (type === 'freeze') {
+                    this.gameState.freezeSecondsLeft += 10;
+                    document.getElementById('feedbackText').textContent = '❄️ TIME FROZEN FOR 10 SECONDS!';
+                } else if (type === 'double') {
+                    this.gameState.doubleSecondsLeft += 15;
+                    document.getElementById('feedbackText').textContent = '⚡ DOUBLE POINTS ACTIVE FOR 15 SECONDS!';
+                } else if (type === 'skip') {
+                    const q = this.gameState.currentQuestion;
+                    document.getElementById('feedbackText').textContent = `💨 SMOKE BOMB! ${q.a} × ${q.b} = ${q.answer}`;
+                    this.handleCorrectAnswer();
+                    return;
+                }
+                this.updateGameHUD();
+            },
+
+            async endGame(saveRecord = true) {
+                this.gameState.active = false;
+                if (this.gameState.timerInterval) clearInterval(this.gameState.timerInterval);
+                audio.stopMusic();
+
+                const elapsed = Math.max(1, this.gameState.elapsedSeconds);
+                const fpm = Number(((this.gameState.factsSolved / elapsed) * 60).toFixed(2));
+                const proj11 = Math.round(fpm * 11);
+
+                // Populate Results UI
+                document.getElementById('resFacts').textContent = this.gameState.factsSolved;
+                document.getElementById('resFpm').textContent = fpm.toFixed(1);
+                document.getElementById('resProj11').textContent = proj11;
+                document.getElementById('resScore').textContent = this.gameState.score;
+
+                const reachedGoal = this.gameState.factsSolved >= this.gameState.factGoal;
+                document.getElementById('resultEmoji').textContent = reachedGoal ? '🏆' : '🥷';
+                document.getElementById('resultTitle').textContent = reachedGoal ? 'GOAL CONQUERED!' : 'TRAINING COMPLETE!';
+                document.getElementById('resultSubtitle').textContent = `${this.playerName} sliced ${this.gameState.factsSolved} facts at ${fpm.toFixed(1)} facts/min (${proj11} per 11 mins)!`;
+
+                // Missed facts review
+                const missedBox = document.getElementById('missedFactsBox');
+                const missedList = document.getElementById('missedFactsList');
+                if (this.gameState.missedFacts.length > 0) {
+                    missedBox.classList.remove('hidden');
+                    missedList.innerHTML = this.gameState.missedFacts
+                        .map(f => `<span class="bg-rose-950/90 border border-rose-700 text-rose-200 px-2.5 py-1 rounded-lg font-bold">${f}</span>`)
+                        .join('');
+                } else {
+                    missedBox.classList.add('hidden');
+                }
+
+                this.showScreen('results');
+
+                if (saveRecord && this.gameState.factsSolved > 0) {
+                    await this.saveScoreRecord({
+                        player_name: this.playerName,
+                        score: this.gameState.score,
+                        facts_solved: this.gameState.factsSolved,
+                        duration_seconds: elapsed,
+                        fpm: fpm,
+                        projected_11m: proj11,
+                        game_mode: `${this.settings.durationMinutes}m (${this.settings.factGoal} Goal)`
+                    });
+                    await this.fetchLeaderboard();
+                }
+            },
+
+            async saveScoreRecord(record) {
+                // 1. Always save to LocalStorage fallback
+                const localScores = JSON.parse(localStorage.getItem('math_ninja_scores') || '[]');
+                localScores.push({ ...record, created_at: new Date().toISOString() });
+                localScores.sort((a, b) => b.fpm - a.fpm || b.score - a.score);
+                localStorage.setItem('math_ninja_scores', JSON.stringify(localScores.slice(0, 25)));
+
+                // 2. Save to unauthenticated Supabase table if configured
+                if (this.supabase) {
+                    try {
+                        await this.supabase.from('math_ninja_scores').insert([record]);
+                    } catch (e) {
+                        console.warn('Supabase insert fallback to local:', e);
+                    }
+                }
+            },
+
+            async fetchLeaderboard() {
+                let scores = [];
+                if (this.supabase) {
+                    try {
+                        const { data, error } = await this.supabase
+                            .from('math_ninja_scores')
+                            .select('*')
+                            .order('fpm', { ascending: false })
+                            .order('score', { ascending: false })
+                            .limit(15);
+                        if (!error && data) scores = data;
+                    } catch (e) {}
+                }
+
+                if (scores.length === 0) {
+                    scores = JSON.parse(localStorage.getItem('math_ninja_scores') || '[]');
+                }
+
+                this.renderLeaderboard(scores);
+            },
+
+            renderLeaderboard(scores) {
+                const listEl = document.getElementById('leaderboardList');
+                if (!scores || scores.length === 0) {
+                    document.getElementById('topRecordName').textContent = this.playerName || 'Mateo';
+                    document.getElementById('topRecordScore').textContent = '0 pts';
+                    document.getElementById('topRecordFacts').textContent = 'No missions yet';
+                    document.getElementById('topRecordFpm').textContent = '0.0 / min';
+                    document.getElementById('topRecordProj').textContent = '0 Facts';
+                    listEl.innerHTML = `<div class="text-center text-xs text-slate-400 py-6">Complete a mission to set the first Dojo record!</div>`;
+                    return;
+                }
+
+                const top = scores[0];
+                document.getElementById('topRecordName').textContent = top.player_name;
+                document.getElementById('topRecordScore').textContent = `${top.score} pts`;
+                document.getElementById('topRecordFacts').textContent = `${top.facts_solved} Facts Solved`;
+                document.getElementById('topRecordFpm').textContent = `${Number(top.fpm).toFixed(1)} / min`;
+                document.getElementById('topRecordProj').textContent = `${top.projected_11m} / 11m`;
+
+                listEl.innerHTML = scores.slice(1, 10).map((s, idx) => `
+                    <div class="flex items-center justify-between bg-slate-900/70 border border-slate-700/70 px-3.5 py-2.5 rounded-xl text-xs">
+                        <div class="flex items-center gap-2.5">
+                            <span class="w-5 h-5 rounded-full bg-slate-800 text-slate-300 font-bold flex items-center justify-center">${idx + 2}</span>
+                            <div>
+                                <div class="font-bold text-white">${s.player_name}</div>
+                                <div class="text-[10px] text-slate-400">${s.facts_solved} facts • ${s.score} pts</div>
+                            </div>
+                        </div>
+                        <div class="text-right">
+                            <div class="font-bold text-cyan-300">${Number(s.fpm).toFixed(1)} FPM</div>
+                            <div class="text-[10px] text-emerald-400 font-semibold">~${s.projected_11m} in 11m</div>
+                        </div>
+                    </div>
+                `).join('');
+            },
+
+            resetHighScores() {
+                const modal = document.getElementById('confirmModal');
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+            },
+
+            closeConfirmModal() {
+                const modal = document.getElementById('confirmModal');
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+            },
+
+            async executeResetHighScores() {
+                this.closeConfirmModal();
+                localStorage.removeItem('math_ninja_scores');
+                if (this.supabase) {
+                    try {
+                        await this.supabase.from('math_ninja_scores').delete().neq('id', 0);
+                    } catch (e) {}
+                }
+                await this.fetchLeaderboard();
+                this.showToast('🗑️ High scores have been reset!');
+            }
+        };
+
+        window.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>
