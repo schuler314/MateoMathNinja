@@ -11,11 +11,17 @@
     <!-- Google Fonts for Ninja / Arcade Vibe -->
     <link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;600;700&family=Bungee&display=swap" rel="stylesheet">
     <style>
+        html {
+            -webkit-tap-highlight-color: transparent;
+        }
         body {
             font-family: 'Fredoka', sans-serif;
             background: radial-gradient(circle at top, #1e1b4b, #0f172a 70%);
             user-select: none;
             -webkit-user-select: none;
+            min-height: 100vh;
+            min-height: 100dvh;
+            touch-action: manipulation;
         }
         .font-ninja {
             font-family: 'Bungee', cursive;
@@ -35,7 +41,7 @@
         .animate-float {
             animation: float 3s ease-in-out infinite;
         }
-        @keyframes pulse- ice {
+        @keyframes pulse-ice {
             0%, 100% { box-shadow: 0 0 15px rgba(56, 189, 248, 0.5); }
             50% { box-shadow: 0 0 30px rgba(56, 189, 248, 0.9); }
         }
@@ -43,42 +49,47 @@
             animation: pulse-ice 1.5s infinite;
         }
         /* Custom Scrollbar */
-        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #1e293b; border-radius: 4px; }
         ::-webkit-scrollbar-thumb { background: #475569; border-radius: 4px; }
         ::-webkit-scrollbar-thumb:hover { background: #64748b; }
     </style>
 </head>
-<body class="text-white min-h-screen flex flex-col items-center justify-between p-3 md:p-6 overflow-x-hidden">
+<body class="text-white flex flex-col items-center justify-between p-2.5 sm:p-4 md:p-6 overflow-x-hidden">
 
     <!-- ================= TOP NAVIGATION BAR ================= -->
-    <header class="w-full max-w-4xl flex items-center justify-between bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-2xl px-4 py-3 shadow-lg z-20">
-        <div class="flex items-center gap-3 cursor-pointer" onclick="app.showScreen('home')">
-            <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-2xl shadow-md border border-red-400">
+    <header class="w-full max-w-4xl flex items-center justify-between bg-slate-800/85 backdrop-blur-md border border-slate-700 rounded-2xl px-3 py-2.5 sm:px-4 sm:py-3 shadow-lg z-20">
+        <div class="flex items-center gap-2.5 sm:gap-3 cursor-pointer" onclick="app.showScreen('home')">
+            <div class="w-9 h-9 sm:w-11 sm:h-11 rounded-xl bg-gradient-to-br from-red-500 to-orange-600 flex items-center justify-center text-xl sm:text-2xl shadow-md border border-red-400 shrink-0">
                 🥷
             </div>
             <div>
-                <h1 class="font-ninja text-lg md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 leading-none">
+                <h1 class="font-ninja text-base sm:text-lg md:text-2xl tracking-wider text-transparent bg-clip-text bg-gradient-to-r from-amber-300 via-orange-400 to-red-500 leading-none">
                     MATH NINJA
                 </h1>
-                <p class="text-xs text-slate-300 font-semibold tracking-wide">MATEO'S QUEST</p>
+                <p class="text-[10px] sm:text-xs text-slate-300 font-semibold tracking-wide">MATEO'S QUEST</p>
             </div>
         </div>
 
-        <div class="flex items-center gap-2 md:gap-3">
+        <div class="flex items-center gap-1.5 sm:gap-2.5">
             <!-- Active Player Badge -->
-            <button onclick="app.openNameModal()" class="flex items-center gap-2 bg-slate-900/90 hover:bg-slate-900 border border-slate-700 px-3 py-1.5 rounded-xl text-sm transition" title="Change Player">
+            <button onclick="app.openNameModal()" class="flex items-center gap-1.5 bg-slate-900/90 hover:bg-slate-900 border border-slate-700 px-2.5 py-1.5 rounded-xl text-xs sm:text-sm transition" title="Change Player">
                 <span class="text-amber-400">👤</span>
-                <span id=" currentPlayerDisplay" class="font-bold text-amber-300 max-w-[100px] truncate">Mateo</span>
+                <span id="currentPlayerDisplay" class="font-bold text-amber-300 max-w-[75px] sm:max-w-[110px] truncate">Mateo</span>
+            </button>
+
+            <!-- Share / QR Quick Button -->
+            <button onclick="app.openShareModal()" class="p-2 sm:p-2.5 rounded-xl bg-slate-700/70 hover:bg-slate-700 border border-slate-600 transition text-sm sm:text-base" title="Share Dojo Link & QR Code">
+                📲
             </button>
 
             <!-- Sound Quick Toggle -->
-            <button id="headerSoundBtn" onclick="app.toggleQuickSound()" class="p-2.5 rounded-xl bg-slate-700/70 hover:bg-slate-700 border border-slate-600 transition" title="Toggle Sound">
+            <button id="headerSoundBtn" onclick="app.toggleQuickSound()" class="p-2 sm:p-2.5 rounded-xl bg-slate-700/70 hover:bg-slate-700 border border-slate-600 transition text-sm sm:text-base" title="Toggle Sound">
                 🔊
             </button>
 
             <!-- Settings Button -->
-            <button onclick="app.openSettings()" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 px-3.5 py-2 rounded-xl font-bold text-sm shadow-md transition">
+            <button onclick="app.openSettings()" class="flex items-center gap-1.5 bg-indigo-600 hover:bg-indigo-500 active:scale-95 px-3 py-2 rounded-xl font-bold text-xs sm:text-sm shadow-md transition">
                 <span>⚙️</span>
                 <span class="hidden sm:inline">Settings</span>
             </button>
@@ -86,14 +97,17 @@
     </header>
 
     <!-- ================= MAIN CONTENT CONTAINER ================= -->
-    <main class="w-full max-w-4xl flex-1 flex flex-col justify-center my-4 relative">
+    <main class="w-full max-w-4xl flex-1 flex flex-col justify-center my-2 sm:my-4 relative">
 
-        <!-- 1. INITIAL NAME ENTRY MODAL / SCREEN -->
-        <section id="screen-name" class="hidden bg-slate-800/90 backdrop-blur-md border-2 border-amber-500/40 rounded-3xl p-6 md:p-10 shadow-2xl max-w-md mx-auto w-full text-center">
-            <div class="text-6xl mb-4 animate-float">🥷</div>
-            <h2 class="font-ninja text-2xl md:text-3xl text-amber-400 mb-2">Enter the Dojo!</h2>
-            <p class="text-slate-300 text-sm mb-6">What is your ninja name, warrior?</p>
-            
+        <!-- 1. INITIAL PLAYER NAME SCREEN -->
+        <section id="screen-name" class="hidden bg-slate-800/90 backdrop-blur-md border-2 border-amber-500/40 rounded-3xl p-6 md:p-8 shadow-2xl max-w-md mx-auto w-full text-center space-y-5">
+            <div class="w-20 h-20 mx-auto rounded-2xl bg-gradient-to-br from-amber-400 via-orange-500 to-red-600 flex items-center justify-center text-5xl shadow-lg animate-float">
+                🥷
+            </div>
+            <div>
+                <h2 class="font-ninja text-2xl md:text-3xl text-amber-400">ENTER THE DOJO!</h2>
+                <p class="text-slate-300 text-sm mt-1">Who is training to become the next Math Ninja Grandmaster?</p>
+            </div>
             <form onsubmit="app.savePlayerName(event)" class="space-y-4">
                 <input 
                     type="text" 
@@ -115,66 +129,66 @@
         </section>
 
         <!-- 2. HOME / DOJO DASHBOARD SCREEN -->
-        <section id="screen-home" class="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
+        <section id="screen-home" class="grid grid-cols-1 lg:grid-cols-12 gap-4 sm:gap-6 items-start">
             
             <!-- Left Column: Game Modes & Quick Controls (7 cols) -->
-            <div class="lg:col-span-7 bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-3xl p-5 md:p-6 shadow-xl space-y-6">
-                <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+            <div class="lg:col-span-7 bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl space-y-5">
+                <div class="flex items-center justify-between border-b border-slate-700 pb-3.5">
                     <div>
-                        <h2 class="font-ninja text-xl md:text-2xl text-amber-400">Choose Your Mission</h2>
+                        <h2 class="font-ninja text-lg sm:text-xl md:text-2xl text-amber-400">Choose Your Mission</h2>
                         <p class="text-xs md:text-sm text-slate-300">Goal: 100 Multiplication Facts in 11 Minutes!</p>
                     </div>
-                    <span id="activeFactorsBadge" class="bg-indigo-950 text-indigo-300 border border-indigo-700 px-3 py-1 rounded-full text-xs font-bold">
+                    <span id="activeFactorsBadge" class="bg-indigo-950 text-indigo-300 border border-indigo-700 px-2.5 py-1 rounded-full text-[11px] font-bold shrink-0">
                         0s - 12s Active
                     </span>
                 </div>
 
                 <!-- Preset Quick-Play Modes -->
-                <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
                     <!-- Classic 100 -->
-                    <button onclick="app.selectMode('classic')" id="mode-classic" class="mode-card group text-left p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-slate-900/90 transition relative overflow-hidden">
-                        <div class="text-3xl mb-2">🏆</div>
-                        <div class="font-ninja text-base text-amber-300">Classic 100</div>
-                        <p class="text-xs text-slate-300 mt-1">100 Facts • 11 Mins</p>
-                        <div class="mt-2 inline-block bg-amber-500/30 text-amber-200 text-[11px] px-2 py-0.5 rounded font-bold">
+                    <button onclick="app.selectMode('classic')" id="mode-classic" class="mode-card group text-left p-3.5 sm:p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-slate-900/90 transition relative overflow-hidden">
+                        <div class="text-2xl sm:text-3xl mb-1.5">🏆</div>
+                        <div class="font-ninja text-sm sm:text-base text-amber-300">Classic 100</div>
+                        <p class="text-xs text-slate-300 mt-0.5">100 Facts • 11 Mins</p>
+                        <div class="mt-2 inline-block bg-amber-500/30 text-amber-200 text-[10px] sm:text-[11px] px-2 py-0.5 rounded font-bold">
                             Mateo's Goal!
                         </div>
                     </button>
 
                     <!-- Quick Sprint -->
-                    <button onclick="app.selectMode('sprint')" id="mode-sprint" class="mode-card group text-left p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
-                        <div class="text-3xl mb-2">⚡</div>
-                        <div class="font-ninja text-base text-cyan-300">Quick Sprint</div>
-                        <p class="text-xs text-slate-300 mt-1">Unlimited • 2 Mins</p>
-                        <div class="mt-2 inline-block bg-cyan-500/20 text-cyan-200 text-[11px] px-2 py-0.5 rounded font-bold">
+                    <button onclick="app.selectMode('sprint')" id="mode-sprint" class="mode-card group text-left p-3.5 sm:p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+                        <div class="text-2xl sm:text-3xl mb-1.5">⚡</div>
+                        <div class="font-ninja text-sm sm:text-base text-cyan-300">Quick Sprint</div>
+                        <p class="text-xs text-slate-300 mt-0.5">Unlimited • 2 Mins</p>
+                        <div class="mt-2 inline-block bg-cyan-500/20 text-cyan-200 text-[10px] sm:text-[11px] px-2 py-0.5 rounded font-bold">
                             Speed Drill
                         </div>
                     </button>
 
                     <!-- Custom Mode -->
-                    <button onclick="app.selectMode('custom')" id="mode-custom" class="mode-card group text-left p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
-                        <div class="text-3xl mb-2">🛠️</div>
-                        <div class="font-ninja text-base text-purple-300">Custom Dojo</div>
-                        <p class="text-xs text-slate-300 mt-1">You Pick Time & Goal</p>
-                        <div class="mt-2 inline-block bg-purple-500/20 text-purple-200 text-[11px] px-2 py-0.5 rounded font-bold">
-                             Flexible
+                    <button onclick="app.selectMode('custom')" id="mode-custom" class="mode-card group text-left p-3.5 sm:p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition">
+                        <div class="text-2xl sm:text-3xl mb-1.5">🛠️</div>
+                        <div class="font-ninja text-sm sm:text-base text-purple-300">Custom Dojo</div>
+                        <p class="text-xs text-slate-300 mt-0.5">You Pick Time & Goal</p>
+                        <div class="mt-2 inline-block bg-purple-500/20 text-purple-200 text-[10px] sm:text-[11px] px-2 py-0.5 rounded font-bold">
+                            Flexible
                         </div>
                     </button>
                 </div>
 
                 <!-- Home Screen Quick Interval & Target Adjusters -->
-                <div class="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-4 space-y-4">
+                <div class="bg-slate-900/80 border border-slate-700/80 rounded-2xl p-3.5 sm:p-4 space-y-3.5">
                     <div class="flex justify-between items-center">
                         <span class="text-xs uppercase tracking-wider font-bold text-slate-400">Mission Parameters</span>
                         <button onclick="app.openSettings()" class="text-xs text-indigo-400 hover:text-indigo-300 font-semibold underline">
-                             Customize 0s-12s Cards
+                            Customize 0s-12s & Music
                         </button>
                     </div>
 
-                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5">
                         <!-- Time Adjuster -->
                         <div class="bg-slate-800/90 p-3 rounded-xl border border-slate-700">
-                            <div class="flex justify-between text-sm mb-1.5">
+                            <div class="flex justify-between text-xs sm:text-sm mb-1.5">
                                 <span class="text-slate-300 font-semibold">⏱️ Time Limit:</span>
                                 <span id="homeTimeLabel" class="font-bold text-amber-400">11 Minutes</span>
                             </div>
@@ -190,7 +204,7 @@
 
                         <!-- Fact Goal Adjuster -->
                         <div class="bg-slate-800/90 p-3 rounded-xl border border-slate-700">
-                            <div class="flex justify-between text-sm mb-1.5">
+                            <div class="flex justify-between text-xs sm:text-sm mb-1.5">
                                 <span class="text-slate-300 font-semibold">🎯 Fact Goal:</span>
                                 <span id="homeGoalLabel" class="font-bold text-emerald-400">100 Facts</span>
                             </div>
@@ -206,153 +220,176 @@
                 </div>
 
                 <!-- Start Button -->
-                <button onclick="app.startGame()" class="w-full py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-ninja text-2xl tracking-wider shadow-xl shadow-emerald-950/50 transform active:scale-95 transition flex items-center justify-center gap-3">
+                <button onclick="app.startGame()" class="w-full py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-500 to-cyan-600 hover:from-emerald-400 hover:to-cyan-500 text-white font-ninja text-xl sm:text-2xl tracking-wider shadow-xl shadow-emerald-950/50 transform active:scale-95 transition flex items-center justify-center gap-3">
                     <span>⚔️</span> START MISSION!
                 </button>
             </div>
 
             <!-- Right Column: Top Score & 11-Min Projections Leaderboard (5 cols) -->
-            <div class="lg:col-span-5 bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-3xl p-5 md:p-6 shadow-xl flex flex-col justify-between h-full">
+            <div class="lg:col-span-5 bg-slate-800/80 backdrop-blur-md border border-slate-700 rounded-3xl p-4 sm:p-5 md:p-6 shadow-xl flex flex-col justify-between h-full">
                 <div>
                     <div class="flex items-center justify-between border-b border-slate-700 pb-3 mb-4">
                         <div class="flex items-center gap-2">
                             <span class="text-2xl">👑</span>
                             <div>
-                                <h3 class="font-ninja text-lg text-amber-400">Dojo Leaderboard</h3>
+                                <h3 class="font-ninja text-base sm:text-lg text-amber-400">Dojo Leaderboard</h3>
                                 <p class="text-[11px] text-slate-400">Speed & 11-Min Projections</p>
                             </div>
                         </div>
-                        <span id="dbStatusBadge" class="text-[11px] px-2.5 py-1 rounded-full bg-slate-700 text-slate-300 font-semibold">
+                        <span id="dbStatusBadge" class="text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full bg-slate-700 text-slate-300 font-semibold">
                             Checking DB...
                         </span>
                     </div>
 
                     <!-- Highlighted #1 Top Score Card -->
-                    <div id="topScoreHighlight" class="bg-gradient-to-br from-amber-500/20 via-orange-600/10 to-slate-900 border border-amber-500/50 rounded-2xl p-4 mb-4">
+                    <div id="topScoreHighlight" class="bg-gradient-to-br from-amber-500/20 via-orange-600/10 to-slate-900 border border-amber-500/50 rounded-2xl p-3.5 sm:p-4 mb-4">
                         <div class="flex justify-between items-start">
                             <div>
                                 <span class="text-[10px] uppercase tracking-wider bg-amber-500 text-slate-950 font-black px-2 py-0.5 rounded">
                                     #1 Grandmaster
                                 </span>
-                                <h4 id="topRecordName" class="text-xl font-bold text-white mt-1">Mateo</h4>
+                                <h4 id="topRecordName" class="text-lg sm:text-xl font-bold text-white mt-1">Mateo</h4>
                             </div>
                             <div class="text-right">
-                                <div id="topRecordScore" class="font-ninja text-2xl text-amber-400">0 pts</div>
+                                <div id="topRecordScore" class="font-ninja text-xl sm:text-2xl text-amber-400">0 pts</div>
                                 <div id="topRecordFacts" class="text-xs text-slate-300">0 Facts Solved</div>
                             </div>
                         </div>
                         <div class="grid grid-cols-2 gap-2 mt-3 pt-3 border-t border-amber-500/20 text-center">
                             <div class="bg-slate-900/80 rounded-xl p-2">
                                 <div class="text-[11px] text-slate-400">Speed (FPM)</div>
-                                <div id="topRecordFpm" class="text-base font-bold text-cyan-300">0.0 / min</div>
+                                <div id="topRecordFpm" class="text-sm sm:text-base font-bold text-cyan-300">0.0 / min</div>
                             </div>
                             <div class="bg-slate-900/80 rounded-xl p-2">
                                 <div class="text-[11px] text-slate-400">11-Min Pace</div>
-                                <div id="topRecordProj" class="text-base font-bold text-emerald-400">0 Facts</div>
+                                <div id="topRecordProj" class="text-sm sm:text-base font-bold text-emerald-400">0 Facts</div>
                             </div>
                         </div>
                     </div>
 
                     <!-- Scrollable Recent/Top Scores List -->
-                    <div id="leaderboardList" class="space-y-2 max-h-60 overflow-y-auto pr-1">
+                    <div id="leaderboardList" class="space-y-2 max-h-56 overflow-y-auto pr-1">
                         <!-- Dynamically populated -->
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-t border-slate-700/80 flex justify-between items-center text-xs text-slate-400">
-                    <span> target pace: <b>9.1 facts/min</b> = 100 in 11m</span>
-                    <button onclick="app.fetchLeaderboard()" class="text-amber-400 hover:underline font-semibold">↻ Refresh</button>
+                <div class="mt-4 pt-3 border-t border-slate-700/80 space-y-3">
+                    <div class="flex justify-between items-center text-xs text-slate-400">
+                        <span>Target pace: <b>9.1 facts/min</b> = 100 in 11m</span>
+                        <button onclick="app.fetchLeaderboard()" class="text-amber-400 hover:underline font-semibold">↻ Refresh</button>
+                    </div>
+
+                    <!-- Share Dojo Card -->
+                    <div class="bg-slate-900/90 border border-indigo-500/40 rounded-2xl p-3 flex items-center justify-between gap-2">
+                        <div class="flex items-center gap-2.5 min-w-0">
+                            <div class="w-9 h-9 rounded-xl bg-indigo-600/30 border border-indigo-400/40 flex items-center justify-center text-lg shrink-0">
+                                📱
+                            </div>
+                            <div class="min-w-0">
+                                <div class="text-xs font-bold text-indigo-300">Share Mateo's Dojo</div>
+                                <div class="text-[10px] text-slate-400 truncate">schuler314.github.io/MateoMathNinja</div>
+                            </div>
+                        </div>
+                        <div class="flex items-center gap-1.5 shrink-0">
+                            <button onclick="app.copyShareUrl()" class="bg-slate-800 hover:bg-slate-700 active:scale-95 border border-slate-600 text-slate-200 text-xs font-bold px-2.5 py-2 rounded-xl transition">
+                                📋 Copy
+                            </button>
+                            <button onclick="app.openShareModal()" class="bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white text-xs font-bold px-2.5 py-2 rounded-xl shadow transition">
+                                🔳 QR Code
+                            </button>
+                        </div>
+                    </div>
                 </div>
             </div>
         </section>
 
-        <!-- 3. ACTIVE GAMEPLAY SCREEN -->
-        <section id="screen-game" class="hidden w-full max-w-2xl mx-auto space-y-4">
+        <!-- 3. ACTIVE GAMEPLAY SCREEN (Optimized for Samsung A54 Portrait Viewport) -->
+        <section id="screen-game" class="hidden w-full max-w-2xl mx-auto space-y-2.5 sm:space-y-4">
             
             <!-- HUD Bar: Timer, Progress, Pace -->
-            <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-4 shadow-lg">
+            <div class="bg-slate-800/90 border border-slate-700 rounded-2xl p-2.5 sm:p-4 shadow-lg">
                 <div class="grid grid-cols-3 gap-2 items-center text-center">
                     <!-- Countdown Timer -->
-                    <div id="timerBox" class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-700 transition">
-                        <div class="text-[11px] text-slate-400 uppercase font-bold flex items-center justify-center gap-1">
-                            <span>⏳</span> Time Left
+                    <div id="timerBox" class="bg-slate-900/90 rounded-xl p-1.5 sm:p-2.5 border border-slate-700 transition">
+                        <div class="text-[10px] sm:text-[11px] text-slate-400 uppercase font-bold flex items-center justify-center gap-1">
+                            <span>⏳</span> Time
                         </div>
-                        <div id="gameTimerDisplay" class="font-ninja text-2xl md:text-3xl text-amber-400">11:00</div>
+                        <div id="gameTimerDisplay" class="font-ninja text-xl sm:text-2xl md:text-3xl text-amber-400">11:00</div>
                     </div>
 
                     <!-- Facts Progress -->
-                    <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-700">
-                        <div class="text-[11px] text-slate-400 uppercase font-bold">🎯 Facts Sliced</div>
-                        <div class="font-ninja text-2xl md:text-3xl text-emerald-400">
-                            <span id="gameFactsDone">0</span><span id="gameFactsGoal" class="text-base text-slate-400">/100</span>
+                    <div class="bg-slate-900/90 rounded-xl p-1.5 sm:p-2.5 border border-slate-700">
+                        <div class="text-[10px] sm:text-[11px] text-slate-400 uppercase font-bold">🎯 Sliced</div>
+                        <div class="font-ninja text-xl sm:text-2xl md:text-3xl text-emerald-400">
+                            <span id="gameFactsDone">0</span><span id="gameFactsGoal" class="text-xs sm:text-base text-slate-400">/100</span>
                         </div>
                     </div>
 
                     <!-- Live Pace & Score -->
-                    <div class="bg-slate-900/90 rounded-xl p-2.5 border border-slate-700">
-                        <div class="text-[11px] text-slate-400 uppercase font-bold">⚡ 11m Pace</div>
-                        <div id="gameLiveProjection" class="font-ninja text-xl md:text-2xl text-cyan-300">0</div>
-                        <div class="text-[10px] text-slate-400">FPM: <span id="gameLiveFpm">0.0</span></div>
+                    <div class="bg-slate-900/90 rounded-xl p-1.5 sm:p-2.5 border border-slate-700">
+                        <div class="text-[10px] sm:text-[11px] text-slate-400 uppercase font-bold">⚡ 11m Pace</div>
+                        <div id="gameLiveProjection" class="font-ninja text-base sm:text-xl md:text-2xl text-cyan-300">0</div>
+                        <div class="text-[9px] sm:text-[10px] text-slate-400">FPM: <span id="gameLiveFpm">0.0</span></div>
                     </div>
                 </div>
 
                 <!-- Visual Progress Bar for Goal & Time -->
-                <div class="mt-3 space-y-1.5">
-                    <div class="w-full bg-slate-900 h-3 rounded-full overflow-hidden border border-slate-700 p-0.5">
+                <div class="mt-2 sm:mt-3 space-y-1">
+                    <div class="w-full bg-slate-900 h-2.5 sm:h-3 rounded-full overflow-hidden border border-slate-700 p-0.5">
                         <div id="factProgressBar" class="bg-gradient-to-r from-emerald-500 to-cyan-400 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
                     </div>
-                    <div class="flex justify-between text-xs text-slate-400 px-1">
+                    <div class="flex justify-between items-center text-[11px] sm:text-xs text-slate-400 px-1">
                         <span>Score: <b id="gameScoreDisplay" class="text-amber-300">0</b></span>
                         <span id="streakDisplay" class="text-orange-400 font-bold">🔥 Streak: 0</span>
-                        <button onclick="app.endGame(false)" class="text-rose-400 hover:underline">Quit Mission</button>
+                        <button onclick="app.endGame(false)" class="text-rose-400 hover:underline font-semibold">Quit</button>
                     </div>
                 </div>
             </div>
 
-            <!-- Power-Ups Bar -->
-            <div id="powerupsContainer" class="grid grid-cols-3 gap-3">
+            <!-- Power-Ups Bar (Compact on Mobile, Full on Desktop) -->
+            <div id="powerupsContainer" class="grid grid-cols-3 gap-2 sm:gap-3">
                 <!-- Freeze Time -->
-                <button onclick="app.usePowerup('freeze')" id="btn-pw-freeze" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none border-2 border-cyan-500/50 rounded-2xl p-3 transition shadow-md">
-                    <div class="flex items-center gap-2 text-left">
-                        <span class="text-2xl">❄️</span>
-                        <div>
-                            <div class="font-bold text-xs md:text-sm text-cyan-300 leading-tight">Time Freeze</div>
-                            <div class="text-[10px] text-slate-400">Pause 10s (Key: 1)</div>
+                <button onclick="app.usePowerup('freeze')" id="btn-pw-freeze" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 active:scale-95 disabled:opacity-40 disabled:pointer-events-none border-2 border-cyan-500/50 rounded-xl sm:rounded-2xl p-2 sm:p-3 transition shadow-md">
+                    <div class="flex items-center gap-1.5 sm:gap-2 text-left min-w-0">
+                        <span class="text-lg sm:text-2xl shrink-0">❄️</span>
+                        <div class="truncate">
+                            <div class="font-bold text-[11px] sm:text-sm text-cyan-300 leading-tight truncate">Freeze</div>
+                            <div class="text-[9px] sm:text-[10px] text-slate-400 hidden sm:block">Pause 10s (Key: 1)</div>
                         </div>
                     </div>
-                    <span id="count-pw-freeze" class="bg-cyan-950 text-cyan-300 border border-cyan-600 px-2 py-0.5 rounded-lg font-ninja text-sm">1</span>
+                    <span id="count-pw-freeze" class="bg-cyan-950 text-cyan-300 border border-cyan-600 px-1.5 sm:px-2 py-0.5 rounded-lg font-ninja text-xs sm:text-sm shrink-0">1</span>
                 </button>
 
                 <!-- 2x Multiplier -->
-                <button onclick="app.usePowerup('double')" id="btn-pw-double" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none border-2 border-amber-500/50 rounded-2xl p-3 transition shadow-md">
-                    <div class="flex items-center gap-2 text-left">
-                        <span class="text-2xl">⚡</span>
-                        <div>
-                            <div class="font-bold text-xs md:text-sm text-amber-300 leading-tight">2x Shuriken</div>
-                            <div class="text-[10px] text-slate-400">2x Pts 15s (Key: 2)</div>
+                <button onclick="app.usePowerup('double')" id="btn-pw-double" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 active:scale-95 disabled:opacity-40 disabled:pointer-events-none border-2 border-amber-500/50 rounded-xl sm:rounded-2xl p-2 sm:p-3 transition shadow-md">
+                    <div class="flex items-center gap-1.5 sm:gap-2 text-left min-w-0">
+                        <span class="text-lg sm:text-2xl shrink-0">⚡</span>
+                        <div class="truncate">
+                            <div class="font-bold text-[11px] sm:text-sm text-amber-300 leading-tight truncate">2x Pts</div>
+                            <div class="text-[9px] sm:text-[10px] text-slate-400 hidden sm:block">2x Pts 15s (Key: 2)</div>
                         </div>
                     </div>
-                    <span id="count-pw-double" class="bg-amber-950 text-amber-300 border border-amber-600 px-2 py-0.5 rounded-lg font-ninja text-sm">1</span>
+                    <span id="count-pw-double" class="bg-amber-950 text-amber-300 border border-amber-600 px-1.5 sm:px-2 py-0.5 rounded-lg font-ninja text-xs sm:text-sm shrink-0">1</span>
                 </button>
 
                 <!-- Smoke Bomb Skip -->
-                <button onclick="app.usePowerup('skip')" id="btn-pw-skip" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 disabled:opacity-40 disabled:pointer-events-none border-2 border-purple-500/50 rounded-2xl p-3 transition shadow-md">
-                    <div class="flex items-center gap-2 text-left">
-                        <span class="text-2xl">💨</span>
-                        <div>
-                            <div class="font-bold text-xs md:text-sm text-purple-300 leading-tight">Smoke Bomb</div>
-                            <div class="text-[10px] text-slate-400">Auto-Solve (Key: 3)</div>
+                <button onclick="app.usePowerup('skip')" id="btn-pw-skip" class="flex items-center justify-between bg-slate-800/90 hover:bg-slate-700 active:scale-95 disabled:opacity-40 disabled:pointer-events-none border-2 border-purple-500/50 rounded-xl sm:rounded-2xl p-2 sm:p-3 transition shadow-md">
+                    <div class="flex items-center gap-1.5 sm:gap-2 text-left min-w-0">
+                        <span class="text-lg sm:text-2xl shrink-0">💨</span>
+                        <div class="truncate">
+                            <div class="font-bold text-[11px] sm:text-sm text-purple-300 leading-tight truncate">Skip</div>
+                            <div class="text-[9px] sm:text-[10px] text-slate-400 hidden sm:block">Auto-Solve (Key: 3)</div>
                         </div>
                     </div>
-                    <span id="count-pw-skip" class="bg-purple-950 text-purple-300 border border-purple-600 px-2 py-0.5 rounded-lg font-ninja text-sm">2</span>
+                    <span id="count-pw-skip" class="bg-purple-950 text-purple-300 border border-purple-600 px-1.5 sm:px-2 py-0.5 rounded-lg font-ninja text-xs sm:text-sm shrink-0">2</span>
                 </button>
             </div>
 
             <!-- Active Flashcard Arena -->
-            <div id="flashcardArena" class="relative bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-slate-600 rounded-3xl p-6 md:p-8 text-center shadow-2xl overflow-hidden">
+            <div id="flashcardArena" class="relative bg-gradient-to-b from-slate-800 to-slate-900 border-2 border-slate-600 rounded-3xl p-4 sm:p-6 md:p-8 text-center shadow-2xl overflow-hidden">
                 
                 <!-- Active Powerup Status Banner -->
-                <div id="activeBuffBanner" class="hidden mb-3 inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400">
+                <div id="activeBuffBanner" class="hidden mb-2 inline-flex items-center gap-2 px-3 py-0.5 rounded-full text-xs font-bold bg-cyan-500/20 text-cyan-300 border border-cyan-400">
                     ❄️ TIME FROZEN!
                 </div>
 
@@ -360,65 +397,65 @@
                 <div id="slashEffect" class="hidden pointer-events-none absolute inset-x-8 top-1/2 h-3 bg-gradient-to-r from-transparent via-amber-300 to-white rounded-full shadow-[0_0_25px_#f59e0b]"></div>
 
                 <!-- The Multiplication Question -->
-                <div class="my-2 md:my-4 flex items-center justify-center gap-4 text-5xl md:text-7xl font-ninja tracking-wider text-white">
-                    <span id=" factorA" class="text-amber-300">7</span>
-                    <span class="text-red-500 text-4xl md:text-6xl">×</span>
+                <div class="my-1 sm:my-3 flex items-center justify-center gap-2.5 sm:gap-4 text-4xl sm:text-5xl md:text-7xl font-ninja tracking-wider text-white">
+                    <span id="factorA" class="text-amber-300">7</span>
+                    <span class="text-red-500 text-3xl sm:text-4xl md:text-6xl">×</span>
                     <span id="factorB" class="text-amber-300">8</span>
                     <span class="text-slate-500">=</span>
-                    <div id="answerBox" class="min-w-[110px] md:min-w-[140px] px-4 py-2 rounded-2xl bg-slate-950 border-2 border-amber-400 text-emerald-400 shadow-inner">
+                    <div id="answerBox" class="min-w-[90px] sm:min-w-[120px] md:min-w-[140px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-slate-950 border-2 border-amber-400 text-emerald-400 shadow-inner">
                         ?
                     </div>
                 </div>
 
-                <p id="feedbackText" class="h-5 text-xs font-bold text-slate-400 tracking-wide">
-                    Type your answer and press ENTER or tap Attack!
+                <p id="feedbackText" class="h-4 sm:h-5 text-[11px] sm:text-xs font-bold text-slate-400 tracking-wide truncate">
+                    Tap numbers below and hit SLASH!
                 </p>
 
-                <!-- On-Screen Touch Numpad for Tablet/Mobile/Desktop -->
-                <div class="max-w-xs mx-auto mt-5 grid grid-cols-3 gap-2.5">
-                    <button onclick="app. appendDigit(1)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">1</button>
-                    <button onclick="app.appendDigit(2)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">2</button>
-                    <button onclick="app.appendDigit(3)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">3</button>
-                    <button onclick="app.appendDigit(4)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">4</button>
-                    <button onclick="app.appendDigit(5)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">5</button>
-                    <button onclick="app.appendDigit(6)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">6</button>
-                    <button onclick="app.appendDigit(7)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">7</button>
-                    <button onclick="app.appendDigit(8)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">8</button>
-                    <button onclick="app.appendDigit(9)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">9</button>
-                    <button onclick="app.clearDigits()" class="bg-rose-900/80 hover:bg-rose-800 text-rose-200 active:scale-95 py-3 rounded-xl font-bold text-sm shadow">CLR</button>
-                    <button onclick="app.appendDigit(0)" class="numpad-btn bg-slate-700/80 hover:bg-slate-600 active:scale-95 py-3 rounded-xl font-ninja text-xl shadow">0</button>
-                    <button onclick="app.submitAnswer()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white active:scale-95 py-3 rounded-xl font-ninja text-base shadow-lg">SLASH!</button>
+                <!-- On-Screen Touch Numpad Optimized for Samsung A54 Thumb Reach -->
+                <div class="max-w-xs mx-auto mt-3 sm:mt-5 grid grid-cols-3 gap-2 sm:gap-2.5">
+                    <button type="button" onclick="app.appendDigit(1)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">1</button>
+                    <button type="button" onclick="app.appendDigit(2)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">2</button>
+                    <button type="button" onclick="app.appendDigit(3)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">3</button>
+                    <button type="button" onclick="app.appendDigit(4)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">4</button>
+                    <button type="button" onclick="app.appendDigit(5)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">5</button>
+                    <button type="button" onclick="app.appendDigit(6)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">6</button>
+                    <button type="button" onclick="app.appendDigit(7)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">7</button>
+                    <button type="button" onclick="app.appendDigit(8)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">8</button>
+                    <button type="button" onclick="app.appendDigit(9)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">9</button>
+                    <button type="button" onclick="app.clearDigits()" class="bg-rose-900/85 hover:bg-rose-800 text-rose-200 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-bold text-xs sm:text-sm shadow">CLR</button>
+                    <button type="button" onclick="app.appendDigit(0)" class="numpad-btn bg-slate-700/85 hover:bg-slate-600 active:bg-slate-500 active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-xl sm:text-2xl shadow">0</button>
+                    <button type="button" onclick="app.submitAnswer()" class="bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 text-white active:scale-95 py-2.5 sm:py-3.5 rounded-xl font-ninja text-sm sm:text-base shadow-lg">SLASH!</button>
                 </div>
             </div>
         </section>
 
         <!-- 4. POST-GAME RESULTS SCREEN -->
-        <section id="screen-results" class="hidden bg-slate-800/90 backdrop-blur-md border-2 border-amber-500/40 rounded-3xl p-6 md:p-8 shadow-2xl max-w-xl mx-auto w-full text-center space-y-6">
+        <section id="screen-results" class="hidden bg-slate-800/90 backdrop-blur-md border-2 border-amber-500/40 rounded-3xl p-5 sm:p-6 md:p-8 shadow-2xl max-w-xl mx-auto w-full text-center space-y-5">
             <div>
-                <div id="resultEmoji" class="text-6xl mb-2">🎉</div>
-                <h2 id="resultTitle" class="font-ninja text-3xl text-amber-400">MISSION COMPLETE!</h2>
-                <p id="resultSubtitle" class="text-sm text-slate-300">Awesome job in the Dojo, Mateo!</p>
+                <div id="resultEmoji" class="text-5xl sm:text-6xl mb-2">🎉</div>
+                <h2 id="resultTitle" class="font-ninja text-2xl sm:text-3xl text-amber-400">MISSION COMPLETE!</h2>
+                <p id="resultSubtitle" class="text-xs sm:text-sm text-slate-300 mt-1">Awesome job in the Dojo, Mateo!</p>
             </div>
 
             <!-- Key Metrics Grid -->
-            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-700">
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 sm:gap-3">
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-700">
                     <div class="text-xs text-slate-400">Facts Solved</div>
-                    <div id="resFacts" class="font-ninja text-2xl text-emerald-400 mt-1">100</div>
+                    <div id="resFacts" class="font-ninja text-xl sm:text-2xl text-emerald-400 mt-1">100</div>
                 </div>
-                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-700">
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-700">
                     <div class="text-xs text-slate-400">Speed (FPM)</div>
-                    <div id="resFpm" class="font-ninja text-2xl text-cyan-300 mt-1">10.5</div>
+                    <div id="resFpm" class="font-ninja text-xl sm:text-2xl text-cyan-300 mt-1">10.5</div>
                     <div class="text-[10px] text-slate-400">facts / minute</div>
                 </div>
-                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-amber-500/40">
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-amber-500/40">
                     <div class="text-xs text-amber-300 font-bold">11-Min Pace</div>
-                    <div id="resProj11" class="font-ninja text-2xl text-amber-400 mt-1">115</div>
+                    <div id="resProj11" class="font-ninja text-xl sm:text-2xl text-amber-400 mt-1">115</div>
                     <div class="text-[10px] text-slate-400">facts / 11 mins</div>
                 </div>
-                <div class="bg-slate-900/90 p-3.5 rounded-2xl border border-slate-700">
+                <div class="bg-slate-900/90 p-3 rounded-2xl border border-slate-700">
                     <div class="text-xs text-slate-400">Total Score</div>
-                    <div id="resScore" class="font-ninja text-2xl text-purple-400 mt-1">1250</div>
+                    <div id="resScore" class="font-ninja text-xl sm:text-2xl text-purple-400 mt-1">1250</div>
                 </div>
             </div>
 
@@ -429,10 +466,10 @@
             </div>
 
             <div class="flex flex-col sm:flex-row gap-3">
-                <button onclick="app.startGame()" class="flex-1 py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 font-ninja text-lg shadow-lg transition">
+                <button onclick="app.startGame()" class="flex-1 py-3.5 sm:py-4 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-600 hover:from-emerald-400 hover:to-teal-500 font-ninja text-base sm:text-lg shadow-lg transition">
                     🔄 PLAY AGAIN
                 </button>
-                <button onclick="app.showScreen('home')" class="flex-1 py-4 rounded-2xl bg-slate-700 hover:bg-slate-600 font-ninja text-lg shadow-lg transition">
+                <button onclick="app.showScreen('home')" class="flex-1 py-3.5 sm:py-4 rounded-2xl bg-slate-700 hover:bg-slate-600 font-ninja text-base sm:text-lg shadow-lg transition">
                     🏠 DOJO HOME
                 </button>
             </div>
@@ -441,13 +478,13 @@
     </main>
 
     <!-- ================= COMPREHENSIVE SETTINGS MODAL ================= -->
-    <div id="settingsModal" class="fixed inset-0 bg-slate-950/80 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
-        <div class="bg-slate-800 border-2 border-slate-600 rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-6 shadow-2xl space-y-6">
+    <div id="settingsModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden items-center justify-center p-3 sm:p-4">
+        <div class="bg-slate-800 border-2 border-slate-600 rounded-3xl max-w-2xl w-full max-h-[92dvh] overflow-y-auto p-4 sm:p-6 shadow-2xl space-y-5">
             
-            <div class="flex items-center justify-between border-b border-slate-700 pb-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3.5">
                 <div class="flex items-center gap-2.5">
                     <span class="text-2xl">⚙️</span>
-                    <h2 class="font-ninja text-2xl text-amber-400">Dojo Settings</h2>
+                    <h2 class="font-ninja text-xl sm:text-2xl text-amber-400">Dojo Settings</h2>
                 </div>
                 <button onclick="app.closeSettings()" class="w-9 h-9 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center font-bold">✕</button>
             </div>
@@ -456,12 +493,12 @@
             <div class="space-y-3">
                 <div class="flex flex-wrap items-center justify-between gap-2">
                     <div>
-                        <h3 class="font-bold text-base text-white">🔢 Multiplication Flashcards (0s to 12s)</h3>
-                        <p class="text-xs text-slate-400">Toggle which number sets appear in Mateo's deck (includes 0×0 up to 12×12)</p>
+                        <h3 class="font-bold text-sm sm:text-base text-white">🔢 Multiplication Flashcards (0s to 12s)</h3>
+                        <p class="text-xs text-slate-400">Toggle which number sets appear in Mateo's deck (0×0 up to 12×12)</p>
                     </div>
                     <div class="flex gap-2">
-                        <button onclick="app.setAllFactors(true)" class="text-xs bg-indigo-600 hover:bg-indigo-500 px-2.5 py-1 rounded-lg font-semibold">Select All</button>
-                        <button onclick="app.setAllFactors(false)" class="text-xs bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded-lg font-semibold">Clear</button>
+                        <button type="button" onclick="app.setAllFactors(true)" class="text-xs bg-indigo-600 hover:bg-indigo-500 px-2.5 py-1 rounded-lg font-semibold">Select All</button>
+                        <button type="button" onclick="app.setAllFactors(false)" class="text-xs bg-slate-700 hover:bg-slate-600 px-2.5 py-1 rounded-lg font-semibold">Clear</button>
                     </div>
                 </div>
                 <div id="factorTogglesGrid" class="grid grid-cols-4 sm:grid-cols-7 gap-2">
@@ -469,67 +506,89 @@
                 </div>
             </div>
 
-            <!-- 2. Duration & Fact Goal Sliders -->
-            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 bg-slate-900/70 p-4 rounded-2xl border border-slate-700">
+            <!-- 2. Duration & Fact Target Sliders -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3.5 bg-slate-900/70 p-3.5 sm:p-4 rounded-2xl border border-slate-700">
                 <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="font-bold text-slate-300">⏱️ Timer Duration</span>
-                        <span id="settingsTimeValue" class="text-amber-400 font-bold">11 Mins</span>
+                    <div class="flex justify-between text-xs sm:text-sm mb-2">
+                        <span class="font-bold text-slate-200">⏱️ Game Duration</span>
+                        <span id="settingsTimeLabel" class="text-amber-400 font-bold">11 Mins</span>
                     </div>
-                    <input type="range" id="settingsTimeSlider" min="1" max="30" value="11" oninput="app.syncSettingsSliders()" class="w-full accent-amber-500">
-                    <p class="text-[11px] text-slate-400 mt-1">Default goal is 11 minutes.</p>
+                    <input type="range" id="settingsTimeSlider" min="1" max="30" value="11" oninput="app.syncSettingsSliders()" class="w-full accent-amber-500 cursor-pointer">
+                    <p class="text-[11px] text-slate-400 mt-1">Adjust from 1m sprint up to 30m marathon</p>
                 </div>
 
                 <div>
-                    <div class="flex justify-between text-sm mb-2">
-                        <span class="font-bold text-slate-300">🎯 Target Facts</span>
-                        <span id="settingsGoalValue" class="text-emerald-400 font-bold">100 Facts</span>
+                    <div class="flex justify-between text-xs sm:text-sm mb-2">
+                        <span class="font-bold text-slate-200">🎯 Target Facts</span>
+                        <span id="settingsGoalLabel" class="text-emerald-400 font-bold">100 Facts</span>
                     </div>
-                    <input type="range" id="settingsGoalSlider" min="10" max="300" step="10" value="100" oninput="app.syncSettingsSliders()" class="w-full accent-emerald-500">
-                    <p class="text-[11px] text-slate-400 mt-1">Default goal is 100 multiplication facts.</p>
+                    <input type="range" id="settingsGoalSlider" min="10" max="300" step="10" value="100" oninput="app.syncSettingsSliders()" class="w-full accent-emerald-500 cursor-pointer">
+                    <p class="text-[11px] text-slate-400 mt-1">Default goal: 100 facts in 11 minutes</p>
                 </div>
             </div>
 
-            <!-- 3. Sound & Power-Ups Toggles -->
-            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <label class="flex items-center justify-between bg-slate-900/70 p-3.5 rounded-2xl border border-slate-700 cursor-pointer">
-                    <span class="text-sm font-semibold">🔊 Sound Effects</span>
-                    <input type="checkbox" id="toggleSfx" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
-                </label>
+            <!-- 3. Sound, Custom Soundtrack & Power-Ups Toggles -->
+            <div class="space-y-3">
+                <div class="grid grid-cols-1 sm:grid-cols-3 gap-2.5 sm:gap-3">
+                    <label class="flex items-center justify-between bg-slate-900/70 p-3 rounded-2xl border border-slate-700 cursor-pointer">
+                        <span class="text-xs sm:text-sm font-semibold">🔊 Sound Effects</span>
+                        <input type="checkbox" id="toggleSfx" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
+                    </label>
 
-                <label class="flex items-center justify-between bg-slate-900/70 p-3.5 rounded-2xl border border-slate-700 cursor-pointer">
-                    <span class="text-sm font-semibold">🎵 Dojo Music</span>
-                    <input type="checkbox" id="toggleMusic" onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
-                </label>
+                    <label class="flex items-center justify-between bg-slate-900/70 p-3 rounded-2xl border border-slate-700 cursor-pointer">
+                        <span class="text-xs sm:text-sm font-semibold">🎵 Dojo Music</span>
+                        <input type="checkbox" id="toggleMusic" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
+                    </label>
 
-                <label class="flex items-center justify-between bg-slate-900/70 p-3.5 rounded-2xl border border-slate-700 cursor-pointer">
-                    <span class="text-sm font-semibold">⚡ Power-Ups</span>
-                    <input type="checkbox" id="togglePowerups" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
-                </label>
+                    <label class="flex items-center justify-between bg-slate-900/70 p-3 rounded-2xl border border-slate-700 cursor-pointer">
+                        <span class="text-xs sm:text-sm font-semibold">⚡ Power-Ups</span>
+                        <input type="checkbox" id="togglePowerups" checked onchange="app.saveSettingsFromModal()" class="w-5 h-5 accent-emerald-500 rounded">
+                    </label>
+                </div>
+
+                <!-- Custom Song Selector -->
+                <div class="bg-slate-900/80 border border-slate-700 rounded-2xl p-3.5 sm:p-4 space-y-2.5">
+                    <div class="flex items-center justify-between">
+                        <label for="musicTrackSelect" class="text-xs sm:text-sm font-bold text-amber-300 flex items-center gap-1.5">
+                            <span>🎧</span> Select Dojo Soundtrack
+                        </label>
+                        <button type="button" id="previewMusicBtn" onclick="app.toggleMusicPreview()" class="text-xs bg-indigo-600 hover:bg-indigo-500 active:scale-95 text-white font-bold px-3 py-1.5 rounded-xl transition">
+                            ▶️ Test Song
+                        </button>
+                    </div>
+                    <select id="musicTrackSelect" onchange="app.changeMusicTrack()" class="w-full bg-slate-950 border border-slate-700 focus:border-amber-400 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-white font-semibold outline-none">
+                        <option value="LeaveTheDoubtBehind.mp3">1. Leave The Doubt Behind</option>
+                        <option value="LittleMissMultiplier.mp3">2. Little Miss Multiplier</option>
+                        <option value="Quiet%20Feet.mp3">3. Quiet Feet</option>
+                        <option value="StepIntoTheShadows.mp3">4. Step Into The Shadows</option>
+                        <option value="CalmingNinja.mp3">5. Calming Ninja</option>
+                    </select>
+                    <p class="text-[11px] text-slate-400">Streams directly from Mateo's GitHub repository during missions.</p>
+                </div>
             </div>
 
             <!-- 4. Supabase Connection & High Score Reset -->
-            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-4 space-y-3">
+            <div class="bg-slate-900/90 border border-slate-700 rounded-2xl p-3.5 sm:p-4 space-y-3">
                 <div class="flex items-center justify-between">
-                    <h4 class="text-sm font-bold text-cyan-300">☁️ Supabase Non-Auth Leaderboard Setup</h4>
-                    <span class="text-[11px] text-slate-400">Persists in Browser & Cloud</span>
+                    <h4 class="text-xs sm:text-sm font-bold text-cyan-300">☁️ Supabase Non-Auth Leaderboard Setup</h4>
+                    <span class="text-[10px] sm:text-[11px] text-slate-400">MathNinja Schema</span>
                 </div>
                 <div class="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
                     <input type="text" id="sbUrlInput" placeholder="https://your-project.supabase.co" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-400">
                     <input type="text" id="sbKeyInput" placeholder="Supabase Anon / Publishable Key" class="bg-slate-950 border border-slate-700 rounded-xl px-3 py-2 text-xs text-slate-200 outline-none focus:border-cyan-400">
                 </div>
-                <div class="flex flex-wrap items-center justify-between gap-2 pt-2">
-                    <button onclick="app.saveSupabaseConfig()" class="text-xs bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-3 py-2 rounded-xl transition">
+                <div class="flex flex-wrap items-center justify-between gap-2 pt-1">
+                    <button type="button" onclick="app.saveSupabaseConfig()" class="text-xs bg-cyan-600 hover:bg-cyan-500 text-white font-bold px-3 py-2 rounded-xl transition">
                         💾 Save Supabase Keys
                     </button>
-                    <button onclick="app.resetHighScores()" class="text-xs bg-rose-900/80 hover:bg-rose-700 text-rose-200 font-bold px-3 py-2 rounded-xl transition">
+                    <button type="button" onclick="app.resetHighScores()" class="text-xs bg-rose-900/80 hover:bg-rose-700 text-rose-200 font-bold px-3 py-2 rounded-xl transition">
                         🗑️ Reset All High Scores
                     </button>
                 </div>
             </div>
 
-            <div class="flex justify-end pt-2">
-                <button onclick="app.closeSettings()" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-ninja px-6 py-2.5 rounded-xl shadow-lg">
+            <div class="flex justify-end pt-1">
+                <button type="button" onclick="app.closeSettings()" class="bg-gradient-to-r from-amber-500 to-orange-600 text-white font-ninja px-6 py-2.5 rounded-xl shadow-lg">
                     DONE
                 </button>
             </div>
@@ -537,9 +596,52 @@
     </div>
 
     <!-- Footer -->
-    <footer class="w-full max-w-4xl text-center text-xs text-slate-500 py-2">
-        Math Ninja: Mateo's Quest • Use Keyboard (0-9, Enter, Backspace) or Touch Numpad
+    <footer class="w-full max-w-4xl text-center text-[11px] sm:text-xs text-slate-500 py-1.5">
+        Math Ninja: Mateo's Quest • Optimized for Samsung Galaxy A54 & Desktop
     </footer>
+
+    <!-- Share QR Code & Link Modal -->
+    <div id="shareModal" class="fixed inset-0 bg-slate-950/85 backdrop-blur-sm z-50 hidden items-center justify-center p-4">
+        <div class="bg-slate-800 border-2 border-indigo-500/60 rounded-3xl max-w-sm w-full p-6 text-center shadow-2xl space-y-4">
+            <div class="flex items-center justify-between border-b border-slate-700 pb-3">
+                <div class="flex items-center gap-2">
+                    <span class="text-xl">📲</span>
+                    <h3 class="font-ninja text-lg text-amber-400">Share Mateo's Dojo</h3>
+                </div>
+                <button onclick="app.closeShareModal()" class="w-8 h-8 rounded-xl bg-slate-700 hover:bg-slate-600 flex items-center justify-center font-bold text-sm">✕</button>
+            </div>
+
+            <p class="text-xs text-slate-300">Scan this QR code with your phone camera to open <b>Math Ninja: Mateo's Quest</b>!</p>
+
+            <!-- QR Code Container -->
+            <div class="bg-white p-4 rounded-2xl inline-block mx-auto shadow-inner border-4 border-amber-400">
+                <img 
+                    src="https://api.qrserver.com/v1/create-qr-code/?size=220x220&margin=6&data=https%3A%2F%2Fschuler314.github.io%2FMateoMathNinja%2F" 
+                    alt="QR Code for MateoMathNinja" 
+                    class="w-48 h-48 mx-auto rounded-lg"
+                    onerror="this.src='https://placehold.co/220x220/ffffff/0f172a?text=QR+Code'"
+                >
+            </div>
+
+            <!-- URL Copy Box -->
+            <div class="bg-slate-900 border border-slate-700 rounded-xl p-2.5 flex items-center justify-between gap-2">
+                <input 
+                    type="text" 
+                    id="shareUrlInput" 
+                    value="https://schuler314.github.io/MateoMathNinja/" 
+                    readonly 
+                    class="bg-transparent text-xs text-cyan-300 font-semibold w-full outline-none truncate"
+                >
+                <button onclick="app.copyShareUrl()" class="bg-emerald-600 hover:bg-emerald-500 active:scale-95 text-white font-bold text-xs px-3 py-1.5 rounded-lg shrink-0 transition">
+                    📋 Copy Link
+                </button>
+            </div>
+
+            <button onclick="app.closeShareModal()" class="w-full py-2.5 rounded-xl bg-slate-700 hover:bg-slate-600 font-bold text-sm">
+                Close
+            </button>
+        </div>
+    </div>
 
     <!-- Custom Toast / Confirmation Modal -->
     <div id="customToast" class="fixed bottom-5 right-5 bg-slate-800 border-2 border-amber-400 text-white px-4 py-3 rounded-2xl shadow-2xl z-50 hidden items-center gap-3 transition-all">
@@ -562,19 +664,25 @@
     <script>
         /**
          * ============================================================================
-         * SUPABASE CONFIGURATION
+         * SUPABASE & GITHUB CONFIGURATION
          * Configured with your non-auth Supabase Project URL & Publishable Key
          * targeting the custom "MathNinja" schema.
          * ============================================================================
          */
         const DEFAULT_SUPABASE_URL = "https://apgfskdxexlyyavmhdlg.supabase.co";
         const DEFAULT_SUPABASE_ANON_KEY = "sb_publishable_rvwuan8wg1tyegGFSt2jMA_E1CJaM5L";
+        const SHARE_SITE_URL = "https://schuler314.github.io/MateoMathNinja/";
+        const GITHUB_AUDIO_BASE = "https://raw.githubusercontent.com/schuler314/MateoMathNinja/main/";
 
-        // Web Audio Synthesizer for Ninja Sound Effects & Background Music (Zero external MP3 dependencies)
+        // Web Audio Synthesizer for Ninja Sound Effects & HTML5 Audio for Custom MP3 Tracks
         class NinjaAudio {
             constructor() {
                 this.ctx = null;
-                this.musicInterval = null;
+                this.bgAudio = new Audio();
+                this.bgAudio.loop = true;
+                this.bgAudio.preload = "auto";
+                this.isPreviewing = false;
+                this.currentTrackFile = "";
             }
             init() {
                 if (!this.ctx) {
@@ -582,6 +690,9 @@
                     this.ctx = new AudioCtx();
                 }
                 if (this.ctx.state === 'suspended') this.ctx.resume();
+            }
+            getTrackUrl(filename) {
+                return `${GITHUB_AUDIO_BASE}${filename}`;
             }
             playSlash() {
                 if (!app.settings.sfx) return;
@@ -633,34 +744,31 @@
                     osc.stop(now + 0.15);
                 });
             }
-            startMusic() {
-                this.stopMusic();
-                if (!app.settings.music) return;
-                this.init();
-                const scale = [220, 261.63, 293.66, 329.63, 392.00]; // Pentatonic Ninja scale
-                let step = 0;
-                this.musicInterval = setInterval(() => {
-                    if (!app.settings.music || app.currentScreen !== 'game') return;
-                    const now = this.ctx.currentTime;
-                    const osc = this.ctx.createOscillator();
-                    const gain = this.ctx.createGain();
-                    osc.type = 'sine';
-                    const freq = scale[step % scale.length];
-                    osc.frequency.setValueAtTime(freq, now);
-                    gain.gain.setValueAtTime(0.04, now);
-                    gain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
-                    osc.connect(gain);
-                    gain.connect(this.ctx.destination);
-                    osc.start(now);
-                    osc.stop(now + 0.35);
-                    step++;
-                }, 450);
+            startMusic(forcePreview = false) {
+                if (!app.settings.music && !forcePreview) {
+                    this.stopMusic();
+                    return;
+                }
+                const trackFile = app.settings.musicTrack || 'LeaveTheDoubtBehind.mp3';
+                const targetUrl = this.getTrackUrl(trackFile);
+
+                if (this.currentTrackFile !== trackFile || this.bgAudio.src !== targetUrl) {
+                    this.bgAudio.src = targetUrl;
+                    this.currentTrackFile = trackFile;
+                }
+                this.bgAudio.volume = 0.45;
+                this.bgAudio.play().catch(() => {
+                    // Autoplay policy fallback
+                });
             }
             stopMusic() {
-                if (this.musicInterval) {
-                    clearInterval(this.musicInterval);
-                    this.musicInterval = null;
-                }
+                this.isPreviewing = false;
+                try {
+                    this.bgAudio.pause();
+                    this.bgAudio.currentTime = 0;
+                } catch (e) {}
+                const btn = document.getElementById('previewMusicBtn');
+                if (btn) btn.textContent = '▶️ Test Song';
             }
         }
 
@@ -677,7 +785,8 @@
                 factGoal: 100,
                 mode: 'classic', // 'classic', 'sprint', 'custom'
                 sfx: true,
-                music: false,
+                music: true,
+                musicTrack: 'LeaveTheDoubtBehind.mp3',
                 powerupsEnabled: true
             },
 
@@ -721,9 +830,11 @@
                 if (!this.playerName) {
                     this.playerName = 'Mateo';
                     this.showScreen('name');
-                    document.getElementById('playerNameInput').value = 'Mateo';
+                    const nameInput = document.getElementById('playerNameInput');
+                    if (nameInput) nameInput.value = 'Mateo';
                 } else {
-                    document.getElementById('currentPlayerDisplay').textContent = this.playerName;
+                    const displayEl = document.getElementById('currentPlayerDisplay');
+                    if (displayEl) displayEl.textContent = this.playerName;
                     this.showScreen('home');
                 }
             },
@@ -732,8 +843,10 @@
                 const storedUrl = localStorage.getItem('math_ninja_sb_url') || DEFAULT_SUPABASE_URL;
                 const storedKey = localStorage.getItem('math_ninja_sb_key') || DEFAULT_SUPABASE_ANON_KEY;
 
-                document.getElementById('sbUrlInput').value = storedUrl.includes('YOUR_PROJECT_ID') ? '' : storedUrl;
-                document.getElementById('sbKeyInput').value = storedKey.includes('YOUR_SUPABASE') ? '' : storedKey;
+                const urlInput = document.getElementById('sbUrlInput');
+                const keyInput = document.getElementById('sbKeyInput');
+                if (urlInput) urlInput.value = storedUrl.includes('YOUR_PROJECT_ID') ? '' : storedUrl;
+                if (keyInput) keyInput.value = storedKey.includes('YOUR_SUPABASE') ? '' : storedKey;
 
                 const badge = document.getElementById('dbStatusBadge');
                 if (storedUrl && storedKey && !storedUrl.includes('YOUR_PROJECT_ID') && window.supabase) {
@@ -741,16 +854,20 @@
                         this.supabase = window.supabase.createClient(storedUrl, storedKey, {
                             db: { schema: 'MathNinja' }
                         });
-                        badge.textContent = '🟢 Supabase (MathNinja)';
-                        badge.className = 'text-[11px] px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 font-semibold';
+                        if (badge) {
+                            badge.textContent = '🟢 Supabase (MathNinja)';
+                            badge.className = 'text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full bg-emerald-950 text-emerald-300 border border-emerald-700 font-semibold';
+                        }
                     } catch (err) {
                         this.supabase = null;
-                        badge.textContent = '🟡 Local Mode';
+                        if (badge) badge.textContent = '🟡 Local Mode';
                     }
                 } else {
                     this.supabase = null;
-                    badge.textContent = '🟡 Local Storage (Add Keys in ⚙️)';
-                    badge.className = 'text-[11px] px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700/60 font-semibold';
+                    if (badge) {
+                        badge.textContent = '🟡 Local Storage';
+                        badge.className = 'text-[10px] sm:text-[11px] px-2.5 py-1 rounded-full bg-amber-950/80 text-amber-300 border border-amber-700/60 font-semibold';
+                    }
                 }
             },
 
@@ -795,20 +912,24 @@
             },
 
             openNameModal() {
-                document.getElementById('playerNameInput').value = this.playerName;
+                const input = document.getElementById('playerNameInput');
+                if (input) input.value = this.playerName;
                 this.showScreen('name');
             },
 
             setQuickName(name) {
-                document.getElementById('playerNameInput').value = name;
+                const input = document.getElementById('playerNameInput');
+                if (input) input.value = name;
             },
 
             savePlayerName(e) {
                 e.preventDefault();
-                const val = document.getElementById('playerNameInput').value.trim() || 'Mateo';
+                const input = document.getElementById('playerNameInput');
+                const val = (input ? input.value.trim() : '') || 'Mateo';
                 this.playerName = val;
                 localStorage.setItem('math_ninja_player', val);
-                document.getElementById('currentPlayerDisplay').textContent = val;
+                const displayEl = document.getElementById('currentPlayerDisplay');
+                if (displayEl) displayEl.textContent = val;
                 this.showScreen('home');
             },
 
@@ -855,42 +976,66 @@
                     const card = document.getElementById(`mode-${m}`);
                     if (!card) return;
                     if (this.settings.mode === m) {
-                        card.className = 'mode-card group text-left p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-slate-900/90 transition relative overflow-hidden shadow-lg';
+                        card.className = 'mode-card group text-left p-3.5 sm:p-4 rounded-2xl border-2 border-amber-400 bg-gradient-to-b from-amber-500/20 to-slate-900/90 transition relative overflow-hidden shadow-lg';
                     } else {
-                        card.className = 'mode-card group text-left p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition';
+                        card.className = 'mode-card group text-left p-3.5 sm:p-4 rounded-2xl border-2 border-slate-700 bg-slate-900/60 hover:border-slate-500 transition';
                     }
                 });
 
                 // Home Sliders
-                document.getElementById('homeTimeSlider').value = Math.min(20, this.settings.durationMinutes);
-                document.getElementById('homeTimeLabel').textContent = `${this.settings.durationMinutes} Minute${this.settings.durationMinutes > 1 ? 's' : ''}`;
-                document.getElementById('homeGoalSlider').value = Math.min(250, this.settings.factGoal);
-                document.getElementById('homeGoalLabel').textContent = `${this.settings.factGoal} Facts`;
+                const homeTimeSlider = document.getElementById('homeTimeSlider');
+                const homeTimeLabel = document.getElementById('homeTimeLabel');
+                const homeGoalSlider = document.getElementById('homeGoalSlider');
+                const homeGoalLabel = document.getElementById('homeGoalLabel');
+
+                if (homeTimeSlider) homeTimeSlider.value = Math.min(20, this.settings.durationMinutes);
+                if (homeTimeLabel) homeTimeLabel.textContent = `${this.settings.durationMinutes} Minute${this.settings.durationMinutes > 1 ? 's' : ''}`;
+                if (homeGoalSlider) homeGoalSlider.value = Math.min(250, this.settings.factGoal);
+                if (homeGoalLabel) homeGoalLabel.textContent = `${this.settings.factGoal} Facts`;
 
                 // Settings Modal Sliders
-                document.getElementById('settingsTimeSlider').value = this.settings.durationMinutes;
-                document.getElementById('settingsTimeValue').textContent = `${this.settings.durationMinutes} Mins`;
-                document.getElementById('settingsGoalSlider').value = this.settings.factGoal;
-                document.getElementById('settingsGoalValue').textContent = `${this.settings.factGoal} Facts`;
+                const settingsTimeSlider = document.getElementById('settingsTimeSlider');
+                const settingsTimeLabel = document.getElementById('settingsTimeLabel');
+                const settingsGoalSlider = document.getElementById('settingsGoalSlider');
+                const settingsGoalLabel = document.getElementById('settingsGoalLabel');
 
-                // Checkboxes
-                document.getElementById('toggleSfx').checked = this.settings.sfx;
-                document.getElementById('toggleMusic').checked = this.settings.music;
-                document.getElementById('togglePowerups').checked = this.settings.powerupsEnabled;
-                document.getElementById('headerSoundBtn').textContent = this.settings.sfx ? '🔊' : '🔇';
+                if (settingsTimeSlider) settingsTimeSlider.value = this.settings.durationMinutes;
+                if (settingsTimeLabel) settingsTimeLabel.textContent = `${this.settings.durationMinutes} Mins`;
+                if (settingsGoalSlider) settingsGoalSlider.value = this.settings.factGoal;
+                if (settingsGoalLabel) settingsGoalLabel.textContent = `${this.settings.factGoal} Facts`;
+
+                // Checkboxes & Music Track Select
+                const toggleSfx = document.getElementById('toggleSfx');
+                const toggleMusic = document.getElementById('toggleMusic');
+                const togglePowerups = document.getElementById('togglePowerups');
+                if (toggleSfx) toggleSfx.checked = this.settings.sfx;
+                if (toggleMusic) toggleMusic.checked = this.settings.music;
+                if (togglePowerups) togglePowerups.checked = this.settings.powerupsEnabled;
+
+                const trackSelect = document.getElementById('musicTrackSelect');
+                if (trackSelect && this.settings.musicTrack) {
+                    trackSelect.value = this.settings.musicTrack;
+                }
+                const headerSoundBtn = document.getElementById('headerSoundBtn');
+                if (headerSoundBtn) {
+                    headerSoundBtn.textContent = (this.settings.sfx || this.settings.music) ? '🔊' : '🔇';
+                }
 
                 // Active Factors Badge
                 const count = this.settings.factors.length;
                 const badge = document.getElementById('activeFactorsBadge');
-                if (count === 13) {
-                    badge.textContent = 'All 0s - 12s Active (169 Cards)';
-                } else {
-                    badge.textContent = `${count} Factor Sets Active`;
+                if (badge) {
+                    if (count === 13) {
+                        badge.textContent = '0s - 12s Active (169)';
+                    } else {
+                        badge.textContent = `${count} Sets Active`;
+                    }
                 }
             },
 
             renderFactorToggles() {
                 const grid = document.getElementById('factorTogglesGrid');
+                if (!grid) return;
                 grid.innerHTML = '';
                 for (let i = 0; i <= 12; i++) {
                     const isSelected = this.settings.factors.includes(i);
@@ -935,26 +1080,111 @@
                 this.renderFactorToggles();
                 this.syncUIWithSettings();
                 const modal = document.getElementById('settingsModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
             },
 
             closeSettings() {
+                if (audio.isPreviewing && this.currentScreen !== 'game') {
+                    audio.stopMusic();
+                }
                 const modal = document.getElementById('settingsModal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
             },
 
             saveSettingsFromModal() {
                 this.settings.sfx = document.getElementById('toggleSfx').checked;
                 this.settings.music = document.getElementById('toggleMusic').checked;
                 this.settings.powerupsEnabled = document.getElementById('togglePowerups').checked;
+                const trackSelect = document.getElementById('musicTrackSelect');
+                if (trackSelect) {
+                    this.settings.musicTrack = trackSelect.value;
+                }
+                if (!this.settings.music && !audio.isPreviewing) {
+                    audio.stopMusic();
+                } else if (this.settings.music && this.currentScreen === 'game') {
+                    audio.startMusic();
+                }
                 this.saveSettings();
                 this.syncUIWithSettings();
             },
 
+            changeMusicTrack() {
+                const trackSelect = document.getElementById('musicTrackSelect');
+                if (trackSelect) {
+                    this.settings.musicTrack = trackSelect.value;
+                    this.saveSettings();
+                    if (audio.isPreviewing || (this.currentScreen === 'game' && this.settings.music)) {
+                        audio.startMusic(audio.isPreviewing);
+                    }
+                }
+            },
+
+            toggleMusicPreview() {
+                const btn = document.getElementById('previewMusicBtn');
+                if (audio.isPreviewing) {
+                    audio.stopMusic();
+                    if (btn) btn.textContent = '▶️ Test Song';
+                } else {
+                    audio.isPreviewing = true;
+                    audio.startMusic(true);
+                    if (btn) btn.textContent = '⏹️ Stop Test';
+                }
+            },
+
+            openShareModal() {
+                const modal = document.getElementById('shareModal');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
+            },
+
+            closeShareModal() {
+                const modal = document.getElementById('shareModal');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
+            },
+
+            copyShareUrl() {
+                const input = document.getElementById('shareUrlInput');
+                if (input) {
+                    input.select();
+                    input.setSelectionRange(0, 99999);
+                }
+                try {
+                    if (navigator.clipboard && navigator.clipboard.writeText) {
+                        navigator.clipboard.writeText(SHARE_SITE_URL).then(() => {
+                            this.showToast('📋 Link copied to clipboard!');
+                        }).catch(() => {
+                            document.execCommand('copy');
+                            this.showToast('📋 Link copied to clipboard!');
+                        });
+                    } else {
+                        document.execCommand('copy');
+                        this.showToast('📋 Link copied to clipboard!');
+                    }
+                } catch (e) {
+                    this.showToast('📋 Link: ' + SHARE_SITE_URL);
+                }
+            },
+
             toggleQuickSound() {
-                this.settings.sfx = !this.settings.sfx;
+                const newState = !(this.settings.sfx || this.settings.music);
+                this.settings.sfx = newState;
+                this.settings.music = newState;
+                if (!newState) {
+                    audio.stopMusic();
+                } else if (this.currentScreen === 'game') {
+                    audio.startMusic();
+                }
                 this.saveSettings();
                 this.syncUIWithSettings();
             },
@@ -972,11 +1202,8 @@
                 const activeSet = new Set(this.settings.factors);
                 for (let a = 0; a <= 12; a++) {
                     for (let b = 0; b <= 12; b++) {
-                        if (activeSet.has(a) || activeSet.has(b)) {
-                            // If user only selected specific sets, prioritize pairs where at least one factor is in the set
-                            if (activeSet.has(a)) {
-                                pool.push({ a, b, answer: a * b });
-                            }
+                        if (activeSet.has(a)) {
+                            pool.push({ a, b, answer: a * b });
                         }
                     }
                 }
@@ -1002,8 +1229,9 @@
                 this.gameState.currentInput = '';
                 document.getElementById('factorA').textContent = this.gameState.currentQuestion.a;
                 document.getElementById('factorB').textContent = this.gameState.currentQuestion.b;
-                document.getElementById('answerBox').textContent = '?';
-                document.getElementById('answerBox').className = 'min-w-[110px] md:min-w-[140px] px-4 py-2 rounded-2xl bg-slate-950 border-2 border-amber-400 text-emerald-400 shadow-inner';
+                const answerBox = document.getElementById('answerBox');
+                answerBox.textContent = '?';
+                answerBox.className = 'min-w-[90px] sm:min-w-[120px] md:min-w-[140px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-slate-950 border-2 border-amber-400 text-emerald-400 shadow-inner';
             },
 
             startGame() {
@@ -1168,7 +1396,7 @@
                 if (this.settings.powerupsEnabled && this.gameState.streak > 0 && this.gameState.streak % 15 === 0) {
                     this.gameState.powerups.freeze++;
                     this.gameState.powerups.double++;
-                    document.getElementById('feedbackText').textContent = `🎁 15 STREAK BONUS! +1 Freeze & +1 2x Shuriken!`;
+                    document.getElementById('feedbackText').textContent = `🎁 15 STREAK BONUS! +1 Freeze & +1 2x Pts!`;
                 } else {
                     document.getElementById('feedbackText').textContent = `⚔️ SLICED! ${this.gameState.currentQuestion.a} × ${this.gameState.currentQuestion.b} = ${this.gameState.currentQuestion.answer}`;
                 }
@@ -1198,7 +1426,7 @@
                     this.gameState.missedFacts.push(factStr);
                 }
                 document.getElementById('feedbackText').textContent = `❌ Oops! Try ${q.a} × ${q.b} again!`;
-                document.getElementById('answerBox').className = 'min-w-[110px] md:min-w-[140px] px-4 py-2 rounded-2xl bg-rose-950 border-2 border-rose-500 text-rose-300 shadow-inner';
+                document.getElementById('answerBox').className = 'min-w-[90px] sm:min-w-[120px] md:min-w-[140px] px-3 py-1.5 sm:px-4 sm:py-2 rounded-2xl bg-rose-950 border-2 border-rose-500 text-rose-300 shadow-inner';
                 this.gameState.currentInput = '';
                 setTimeout(() => {
                     if (this.gameState.active) {
@@ -1318,6 +1546,7 @@
 
             renderLeaderboard(scores) {
                 const listEl = document.getElementById('leaderboardList');
+                if (!listEl) return;
                 if (!scores || scores.length === 0) {
                     document.getElementById('topRecordName').textContent = this.playerName || 'Mateo';
                     document.getElementById('topRecordScore').textContent = '0 pts';
@@ -1354,14 +1583,18 @@
 
             resetHighScores() {
                 const modal = document.getElementById('confirmModal');
-                modal.classList.remove('hidden');
-                modal.classList.add('flex');
+                if (modal) {
+                    modal.classList.remove('hidden');
+                    modal.classList.add('flex');
+                }
             },
 
             closeConfirmModal() {
                 const modal = document.getElementById('confirmModal');
-                modal.classList.add('hidden');
-                modal.classList.remove('flex');
+                if (modal) {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                }
             },
 
             async executeResetHighScores() {
